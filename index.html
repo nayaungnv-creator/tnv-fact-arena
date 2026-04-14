@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>TNV Fact Arena</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#f8f6f2">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="TNV Fact Arena">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+Myanmar:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#f8f6f2;--bg2:#ffffff;--bg3:#f0ede8;
+  --border:#e0dbd4;--border2:#d0c8c0;
+  --red:#7A1818;--red2:#9B2020;--red3:#BE3030;
+  --text:#1a1410;--text2:#5a5248;--text3:#9a9088;
+  --green:#166534;--gold:#B8820A;
+  --my:'Noto Sans Myanmar',sans-serif;
+  --hd:'Bebas Neue',cursive;
+}
+body{font-family:var(--my);background:var(--bg);color:var(--text);min-height:100vh}
+
+/* HEADER */
+.hdr{background:var(--bg2);border-bottom:2px solid var(--red);padding:0 16px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.hdr-logo{display:flex;align-items:center;gap:9px}
+.hdr-n{width:32px;height:32px;background:var(--red);display:flex;align-items:center;justify-content:center;font-family:var(--hd);font-size:20px;color:#fff;clip-path:polygon(0 0,100% 0,100% 75%,75% 100%,0 100%)}
+.hdr-title{font-family:var(--hd);font-size:17px;letter-spacing:.06em}
+.hdr-sub{font-size:9px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase}
+.hdr-live{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.hdr-dot{width:7px;height:7px;border-radius:50%;background:#ccc}
+.hdr-dot.on{background:#16a34a;box-shadow:0 0 6px rgba(22,163,74,.4);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* VPN */
+.vpn{background:#fff8f0;border-bottom:1px solid #fcd9b0;padding:7px 16px;display:flex;align-items:center;gap:8px;font-size:11px;color:#92400e}
+.vpn b{color:#c2410c}
+.vpn-x{margin-left:auto;background:none;border:none;font-size:16px;cursor:pointer;color:#9a9088;padding:0 4px;line-height:1}
+
+/* NAV */
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:50;background:rgba(248,246,242,.97);backdrop-filter:blur(10px);border-top:1px solid var(--border);display:flex;padding-bottom:env(safe-area-inset-bottom)}
+.ntab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 2px 6px;background:none;border:none;cursor:pointer;color:var(--text3);font-family:var(--my);font-size:9px;gap:3px;position:relative;transition:color .15s}
+.ntab.on{color:var(--red3)}
+.ntab.on::before{content:'';position:absolute;top:0;left:25%;right:25%;height:2px;background:var(--red);border-radius:0 0 2px 2px}
+.ntab-ic{font-size:16px;line-height:1}
+
+/* VIEWS */
+.view{display:none;padding:14px 16px 90px}
+.view.on{display:block}
+.mx{max-width:680px;margin:0 auto}
+
+/* TOGGLE */
+.tog{display:flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:1.125rem}
+.togb{flex:1;padding:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:none;color:var(--text3);font-family:var(--my)}
+.togb.on{background:var(--red);color:#fff}
+
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--red);border-radius:0 10px 10px 0;padding:1rem;margin-bottom:.875rem}
+.card.dim{opacity:.5;border-left-color:var(--border2)}
+.ctop{display:flex;align-items:center;gap:7px;margin-bottom:9px}
+.ctag{font-family:var(--hd);font-size:10px;letter-spacing:.08em;color:var(--red3);background:rgba(122,24,24,.08);padding:2px 9px;border-radius:3px;border:1px solid rgba(122,24,24,.18)}
+.ctag.grey{color:var(--text3);background:var(--bg3);border-color:var(--border)}
+.clive{display:flex;align-items:center;gap:4px;font-size:9px;font-weight:700;color:#16a34a;letter-spacing:.08em;text-transform:uppercase}
+.clive::before{content:'';width:5px;height:5px;border-radius:50%;background:#16a34a;animation:blink 1.5s infinite}
+.ctitle{font-size:15px;font-weight:700;color:var(--text);margin:0 0 7px;line-height:1.5}
+.cbody{font-size:13px;color:var(--text2);line-height:1.7;margin:0 0 9px;white-space:pre-wrap}
+.cmeta{font-size:11px;color:var(--text3);display:flex;gap:10px;flex-wrap:wrap}
+
+.scard{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.875rem;margin-bottom:.625rem}
+.shead{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.sname{font-size:13px;font-weight:700;color:var(--text)}
+.stime{font-size:10px;color:var(--text3)}
+.sbody{font-size:13px;color:var(--text2);line-height:1.55}
+.spts{font-size:13px;font-weight:700;color:var(--gold)}
+.vmark{font-size:10px;color:var(--green);font-weight:700}
+
+/* FORMS */
+.fg{margin-bottom:.875rem}
+.fl{display:block;font-size:10px;font-weight:700;color:var(--text3);margin-bottom:5px;letter-spacing:.07em;text-transform:uppercase}
+.fi,.fta,.fse{width:100%;padding:10px 13px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:var(--my);transition:border .15s}
+.fi:focus,.fta:focus,.fse:focus{outline:none;border-color:var(--red)}
+.fta{min-height:90px;resize:vertical}
+.fse{-webkit-appearance:none;cursor:pointer}
+
+/* CHIPS */
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.chip{padding:4px 11px;font-size:11px;font-weight:600;background:var(--bg3);border:1px solid var(--border2);border-radius:20px;color:var(--text2);cursor:pointer;transition:all .15s}
+.chip:hover{border-color:var(--red);color:var(--red3)}
+
+/* WARNINGS */
+.warn{background:#fff5f5;border:1px solid #fecaca;border-left:3px solid var(--red);border-radius:0 8px 8px 0;padding:9px 13px;margin-bottom:.875rem;font-size:12px;color:#991b1b;line-height:1.6}
+.warn b{display:block;font-size:13px;margin-bottom:2px;color:#7f1d1d}
+.warnx{background:#fffbeb;border:1px solid #fcd34d;border-left:3px solid #d97706;border-radius:0 7px 7px 0;padding:7px 12px;margin-bottom:.875rem;font-size:11px;color:#92400e;line-height:1.6}
+
+/* BUTTONS */
+.btn{display:block;width:100%;padding:12px;background:var(--red);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--my);transition:all .15s}
+.btn:hover{background:var(--red2)}.btn:active{transform:scale(.98)}.btn:disabled{opacity:.4;cursor:not-allowed}
+.btns{padding:8px 14px;font-size:12px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:7px;cursor:pointer;font-family:var(--my)}
+.btna{padding:5px 11px;font-size:11px;font-weight:700;background:rgba(184,130,10,.1);color:var(--gold);border:1px solid rgba(184,130,10,.2);border-radius:5px;cursor:pointer}
+.btnd{padding:7px 12px;font-size:12px;background:rgba(239,68,68,.06);color:#dc2626;border:1px solid rgba(239,68,68,.18);border-radius:6px;cursor:pointer;font-family:var(--my)}
+.row2{display:flex;gap:8px}.row2 .btn{flex:1}
+
+/* ALERTS */
+.al{padding:9px 13px;border-radius:8px;font-size:13px;margin-bottom:.875rem}
+.als{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0}
+.ale{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
+.alw{background:#fffbeb;color:#92400e;border:1px solid #fcd34d}
+
+/* CHAT */
+.chat-w{display:flex;flex-direction:column;height:calc(100dvh - 160px);max-height:600px}
+.chat-m{flex:1;overflow-y:auto;padding-bottom:.5rem}
+.chat-m::-webkit-scrollbar{width:3px}.chat-m::-webkit-scrollbar-thumb{background:var(--border2)}
+.msg{display:flex;gap:8px;margin-bottom:.75rem}
+.msg-av{width:28px;height:28px;border-radius:7px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--text3);flex-shrink:0;margin-top:2px}
+.msg-av.ed{background:rgba(122,24,24,.12);border-color:rgba(122,24,24,.25);color:var(--red3)}
+.msg-bd{flex:1;min-width:0}
+.msg-mt{display:flex;align-items:center;gap:5px;margin-bottom:2px}
+.msg-un{font-size:12px;font-weight:700;color:var(--text)}
+.msg-un.ed{color:var(--red3)}
+.msg-badge{font-size:8px;font-weight:700;background:rgba(122,24,24,.1);color:var(--red3);padding:1px 5px;border-radius:3px;border:1px solid rgba(122,24,24,.18);text-transform:uppercase;letter-spacing:.05em}
+.msg-t{font-size:10px;color:var(--text3);margin-left:auto}
+.msg-tx{font-size:13px;color:var(--text2);line-height:1.5}
+.msg-tx.ed{color:var(--text)}
+.chat-bot{padding-top:.75rem;border-top:1px solid var(--border)}
+.chat-unr{display:flex;align-items:center;gap:7px;margin-bottom:7px}
+.chat-unlb{font-size:11px;color:var(--text3);flex-shrink:0}
+.chat-row{display:flex;gap:7px}
+.chat-fi{flex:1;padding:9px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:var(--my)}
+.chat-fi:focus{outline:none;border-color:var(--red)}
+.chat-send{padding:9px 16px;background:var(--red);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--my)}
+.chat-send:hover{background:var(--red2)}
+
+/* LEADERBOARD */
+.lb-hero{background:linear-gradient(135deg,rgba(122,24,24,.08),rgba(155,32,32,.04));border:1px solid rgba(122,24,24,.18);border-radius:10px;padding:1.125rem;margin-bottom:1.125rem;text-align:center}
+.lb-htitle{font-family:var(--hd);font-size:26px;letter-spacing:.1em;color:var(--text)}
+.lb-hsub{font-size:10px;color:var(--text3);letter-spacing:.06em;margin-top:2px;text-transform:uppercase}
+.lb-row{display:flex;align-items:center;gap:10px;padding:10px 12px;margin-bottom:5px;background:var(--bg2);border:1px solid var(--border);border-radius:8px}
+.lb-row.top{border-color:rgba(184,130,10,.22);background:rgba(184,130,10,.04)}
+.lb-rk{width:26px;text-align:center;font-family:var(--hd);font-size:17px;color:var(--text3);flex-shrink:0}
+.lb-rk.g{color:var(--gold)}.lb-rk.sv{color:#9ca3af;font-size:15px}.lb-rk.br{color:#c07828;font-size:14px}
+.lb-inf{flex:1;min-width:0}
+.lb-nm{font-size:13px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb-tr{font-size:10px;color:var(--text3);margin-top:1px}
+.lb-pts{font-family:var(--hd);font-size:19px;color:var(--gold);flex-shrink:0}
+
+/* EDITOR */
+.ed-sec{margin-bottom:1.375rem}
+.ed-ttl{font-family:var(--hd);font-size:11px;letter-spacing:.12em;color:var(--text3);text-transform:uppercase;margin-bottom:.75rem;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.pts-in{width:56px;padding:5px 7px;background:var(--bg2);border:1px solid var(--border2);border-radius:5px;color:var(--text);font-size:12px;text-align:center}
+.pts-in:focus{outline:none;border-color:var(--gold)}
+.award-r{display:flex;align-items:center;gap:6px;margin-top:7px}
+
+/* TRAINING */
+.mod-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:1.125rem;scrollbar-width:none}
+.mod-tabs::-webkit-scrollbar{display:none}
+.mtab{padding:6px 13px;font-size:11px;font-weight:600;background:var(--bg3);border:1px solid var(--border2);border-radius:20px;color:var(--text2);cursor:pointer;white-space:nowrap;flex-shrink:0;font-family:var(--my);transition:all .15s}
+.mtab.on{background:var(--red);color:#fff;border-color:var(--red)}
+.lesson-card{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--red);border-radius:0 10px 10px 0;padding:1.125rem;margin-bottom:1rem}
+.lesson-icon{font-size:22px;margin-bottom:8px}
+.lesson-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:11px;line-height:1.5}
+.lesson-body{font-size:13px;color:var(--text2);line-height:1.8}
+.lesson-body p{margin-bottom:8px}
+.quiz-box{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:1rem}
+.quiz-label{font-family:var(--hd);font-size:10px;letter-spacing:.1em;color:var(--red3);text-transform:uppercase;margin-bottom:7px}
+.quiz-q{font-size:14px;font-weight:600;color:var(--text);margin-bottom:9px}
+.quiz-opts{display:flex;flex-direction:column;gap:5px}
+.qopt{padding:9px 13px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;text-align:left;cursor:pointer;font-family:var(--my);font-size:13px;color:var(--text);transition:all .15s}
+.qopt:hover{border-color:var(--border2)}
+.qopt.correct{background:#f0fdf4;border-color:#86efac;color:#166534}
+.qopt.wrong{background:#fef2f2;border-color:#fca5a5;color:#991b1b}
+.qfeedback{margin-top:7px;font-size:13px}
+.prog-bar{display:flex;gap:3px;margin-bottom:1rem}
+.prog-seg{height:3px;flex:1;border-radius:2px;background:var(--border2);transition:background .3s}
+.prog-seg.done{background:var(--red)}
+.lesson-nav{display:flex;gap:8px}
+
+/* EMPTY */
+.empty{text-align:center;padding:2.5rem 1rem;color:var(--text3)}
+.empty-ic{font-size:34px;margin-bottom:10px}
+.empty b{display:block;font-size:14px;color:var(--text2);margin-bottom:5px}
+.empty p{font-size:12px;line-height:1.6}
+
+/* SYNC */
+.sync{position:fixed;top:60px;right:12px;z-index:99;font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:4px;background:rgba(22,101,52,.08);color:var(--green);border:1px solid rgba(22,101,52,.18);opacity:0;transition:opacity .3s;pointer-events:none;font-family:'Bebas Neue',cursive}
+.sync.on{opacity:1}
+.hint{font-size:10px;color:var(--text3);text-align:center;padding:.625rem 0 0}
+
+@media(max-width:380px){.hdr-sub{display:none}.ntab{font-size:8px}}
+</style>
+</head>
+<body>
+
+<!-- VPN BANNER -->
+<div class="vpn" id="vpnBanner">
+  <span>⚠️</span>
+  <span>မြန်မာပြည်ထဲကနေ သုံးသူတွေ — <b>VPN ဖွင့်ထားပါ</b> (Psiphon / Lantern)</span>
+  <button class="vpn-x" onclick="document.getElementById('vpnBanner').style.display='none';localStorage.setItem('vpn_ok','1')">✕</button>
+</div>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-logo">
+    <div class="hdr-n">N</div>
+    <div>
+      <div class="hdr-title">TNV FACT ARENA</div>
+      <div class="hdr-sub">The Nation Voice Myanmar</div>
+    </div>
+  </div>
+  <div class="hdr-live">
+    <div class="hdr-dot" id="liveDot"></div>
+    <span id="liveStatus">CONNECT</span>
+  </div>
+</header>
+
+<!-- VIEW: CHALLENGE -->
+<div class="view on" id="v-challenge">
+  <div class="mx">
+    <div class="warnx">⚠️ ဒီ platform မှာ <b>fact-check သာလုပ်ပါ</b> — မြေပြင်သတင်း၊ ကိုယ်ရေးကိုယ်တာ အချက်အလက်တွေ မတင်ပါနဲ့</div>
+    <div class="tog">
+      <button class="togb on" id="tLive" onclick="setHist(false)">လက်ရှိ Challenge</button>
+      <button class="togb" id="tHist" onclick="setHist(true)">မှတ်တမ်း</button>
+    </div>
+    <div id="challengeArea"></div>
+    <div id="topSubs"></div>
+    <p class="hint">10s တစ်ကြိမ် sync</p>
+  </div>
+</div>
+
+<!-- VIEW: SUBMIT -->
+<div class="view" id="v-submit">
+  <div class="mx">
+    <div id="submitAlert"></div>
+    <div class="warn"><b>⚠️ အမည်အစစ် မသုံးပါနဲ့</b>မြန်မာပြည်ကနေ ပါဝင်သူတွေ — Alias တစ်ခုသာ သုံးပါ</div>
+    <div id="submitRef"></div>
+    <div class="fg">
+      <label class="fl">Username (Alias)</label>
+      <input class="fi" type="text" id="un" placeholder="bird_77" maxlength="30">
+      <div style="font-size:11px;color:var(--red3);margin-top:4px">အစစ်နာမည် မဖြစ်ရဘူး</div>
+      <div class="chips" id="chips"></div>
+    </div>
+    <div class="fg">
+      <label class="fl">ရှာတွေ့သော အကြောင်းအရာ</label>
+      <textarea class="fta" id="evidence" placeholder="ဥပမာ:&#10;- ဒီ claim မှန်တယ် / မမှန်ဘူး ဆိုတာ ဘာကြောင့်...&#10;- Source: https://..."></textarea>
+    </div>
+    <button class="btn" id="subBtn" onclick="doSubmit()">အဖြေတင်မည်</button>
+  </div>
+</div>
+
+<!-- VIEW: REPORT -->
+<div class="view" id="v-report">
+  <div class="mx">
+    <div id="reportAlert"></div>
+    <div class="warnx">⚠️ <b>VPN ဖွင့်ထားပါ</b> — ကိုယ်ရေးကိုယ်တာ အချက်အလက် မထည့်ပါနဲ့</div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--red2);border-radius:0 10px 10px 0;padding:1.125rem;margin-bottom:.875rem">
+      <div style="font-family:var(--hd);font-size:12px;letter-spacing:.1em;color:var(--red3);margin-bottom:.875rem">📰 REPORTER SUBMISSION</div>
+      <div class="fg"><label class="fl">သတင်းခေါင်းစဉ်</label><input class="fi" type="text" id="repTitle" placeholder="ဥပမာ: မကွေး မြို့နယ် တွင် ..."></div>
+      <div class="fg"><label class="fl">တည်နေရာ (optional)</label><input class="fi" type="text" id="repLoc" placeholder="ဥပမာ: မကွေး မြို့နယ်"></div>
+      <div class="fg"><label class="fl">သတင်းအကြောင်းအရာ</label><textarea class="fta" style="min-height:130px" id="repBody" placeholder="သင်မြင်ကြုံတွေ့ရှိသမျှ အသေးစိတ်ရေးပါ...&#10;&#10;- ဘာဖြစ်ခဲ့သလဲ?&#10;- ဘယ်အချိန်မှာ?&#10;- သက်သေ?"></textarea></div>
+    </div>
+    <button class="btn" id="repBtn" onclick="doReport()">သတင်းတင်မည်</button>
+  </div>
+</div>
+
+<!-- VIEW: CHAT -->
+<div class="view" id="v-chat">
+  <div class="mx">
+    <div class="warnx">⚠️ <b>မြေပြင်သတင်း မတင်ပါနဲ့</b> — fact-check discussion သာ</div>
+    <div class="chat-w">
+      <div class="chat-m" id="chatMsgs"><div class="empty"><div class="empty-ic">💬</div><b>Chat ဗလာနေသေးတယ်</b><p>ပထမဆုံး message ပို့ပါ</p></div></div>
+      <div class="chat-bot">
+        <div class="chat-unr"><span class="chat-unlb">အမည်:</span><input class="fi" style="flex:1;padding:7px 10px;font-size:13px" type="text" id="chatUn" placeholder="alias..." maxlength="30"></div>
+        <div class="chat-row">
+          <input class="chat-fi" type="text" id="chatMsg" placeholder="Message ရေးပါ..." maxlength="400" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();doChat()}">
+          <button class="chat-send" onclick="doChat()">ပို့</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VIEW: LEADERBOARD -->
+<div class="view" id="v-board">
+  <div class="mx">
+    <div class="lb-hero"><div class="lb-htitle">LEADERBOARD</div><div class="lb-hsub">TNV Fact Arena — Top Verifiers</div></div>
+    <div id="lbList"></div>
+    <p class="hint">Points ရမှ ဒီမှာပေါ်လာမယ်</p>
+  </div>
+</div>
+
+<!-- VIEW: TRAINING -->
+<div class="view" id="v-training">
+  <div class="mx">
+    <div style="background:#fff8f0;border:1px solid #fcd9b0;border-left:3px solid #c2410c;border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:1rem;font-size:12px;color:#92400e;line-height:1.6">
+      📚 <b>IMS LEARN</b> (International Media Support) ၏ သင်ခန်းစာများကို ကိုးကားပြုစုထားသည်။ မြန်မာဘာသာဖြင့် ပြည့်စုံသော သင်ခန်းစာများကို <a href="https://imslearn.org/#/lang?key=my" target="_blank" style="color:#c2410c;font-weight:700">imslearn.org</a> တွင် အခမဲ့ ဝင်ရောက်ဖတ်ရှုနိုင်သည်
+    </div>
+    <div class="mod-tabs" id="modTabs"></div>
+    <div id="trainingArea"></div>
+  </div>
+</div>
+
+<!-- VIEW: EDITOR -->
+<div class="view" id="v-editor">
+  <div class="mx">
+    <div id="edAlert"></div>
+    <div id="edLogin">
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.5rem">
+        <div style="font-family:var(--hd);font-size:16px;letter-spacing:.08em;color:var(--text2);margin-bottom:1rem">EDITOR LOGIN</div>
+        <div class="fg"><label class="fl">Password</label><input class="fi" type="password" id="edPw" onkeydown="if(event.key==='Enter')doEdLogin()"></div>
+        <button class="btn" onclick="doEdLogin()">ဝင်မည်</button>
+      </div>
+    </div>
+    <div id="edPanel" style="display:none">
+      <div class="ed-sec">
+        <div class="ed-ttl">Challenge တင်မည်</div>
+        <div class="fg"><label class="fl">အမျိုးအစား</label>
+          <select class="fse" id="cType">
+            <option value="Claim">Claim — မှန်/မမှန် စစ်မည်</option>
+            <option value="Image">Image — မူရင်း source ရှာမည်</option>
+            <option value="Location">Location — တည်နေရာ အတည်ပြု</option>
+            <option value="Video">Video — စစ်မှန်မှု စစ်ဆေး</option>
+          </select>
+        </div>
+        <div class="fg"><label class="fl">ခေါင်းစဉ်</label><input class="fi" type="text" id="cTitle" placeholder="Challenge ခေါင်းစဉ်..."></div>
+        <div class="fg"><label class="fl">အသေးစိတ်</label><textarea class="fta" id="cBody" placeholder="Challenge အသေးစိတ်..."></textarea></div>
+        <div class="row2"><button class="btn" onclick="doPost()">တင်မည်</button><button class="btns" onclick="doClose()">Session ပိတ်</button></div>
+      </div>
+      <div class="ed-sec">
+        <div class="ed-ttl">Submissions <span id="subCount"></span></div>
+        <div id="edSubs"><div style="font-size:13px;color:var(--text3)">Submissions မရှိသေးပါ</div></div>
+      </div>
+      <div class="ed-sec">
+        <div class="ed-ttl">Reporter Submissions <span id="repCount"></span></div>
+        <div id="edReports"><div style="font-size:13px;color:var(--text3)">Reports မရှိသေးပါ</div></div>
+      </div>
+      <div class="ed-sec">
+        <div class="ed-ttl">ယခင် Challenges</div>
+        <div id="pastCh"><div style="font-size:13px;color:var(--text3)">မရှိသေးပါ</div></div>
+      </div>
+      <div class="ed-sec">
+        <div class="ed-ttl">Reset</div>
+        <div class="row2" style="max-width:240px">
+          <button class="btnd" onclick="doReset()">Data ဖျက်</button>
+          <button class="btnd" onclick="doClearChat()">Chat ဖျက်</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="nav">
+  <button class="ntab on" onclick="goTab(this,'challenge')"><span class="ntab-ic">📡</span>ဆွေးနွေးရာ</button>
+  <button class="ntab" onclick="goTab(this,'submit')"><span class="ntab-ic">✍️</span>ဆွေးနွေးရေး</button>
+  <button class="ntab" onclick="goTab(this,'report')"><span class="ntab-ic">📰</span>သတင်းပို့</button>
+  <button class="ntab" onclick="goTab(this,'chat')"><span class="ntab-ic">💬</span>Chat</button>
+  <button class="ntab" onclick="goTab(this,'board')"><span class="ntab-ic">🏆</span>ရမှတ်</button>
+  <button class="ntab" onclick="goTab(this,'training')"><span class="ntab-ic">📚</span>သင်ခန်း</button>
+  <button class="ntab" onclick="goTab(this,'editor')"><span class="ntab-ic">🔐</span>Editor</button>
+</nav>
+
+<div class="sync" id="syncEl">SYNC</div>
+
+<script>
+// CONFIG
+const DB = 'https://tnv-fact-arena-default-rtdb.firebaseio.com';
+const PASS = 'TNVEditor2026';
+const ALIASES = ['bird_77','river_44','cloud_21','star_09','wind_33','moon_15','tree_88','fish_62','hill_50','rain_37'];
+
+// STATE
+let isEd = false;
+let curTab = 'challenge';
+let showHist = false;
+let lastChatTs = 0;
+let refreshTimer = null;
+
+// UTILS
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function arr(o) {
+  if (!o) return [];
+  return Object.entries(o).map(([id,v]) => Object.assign({}, v, {_id: id}));
+}
+function ago(ts) {
+  if (!ts) return '';
+  const d = Date.now() - ts;
+  if (d < 60000) return 'ခုနက';
+  if (d < 3600000) return Math.floor(d/60000) + 'မိနစ်';
+  if (d < 86400000) return Math.floor(d/3600000) + 'နာရီ';
+  return new Date(ts).toLocaleDateString('my-MM');
+}
+function tier(p) {
+  if (p >= 5000) return '⭐ Master Verifier';
+  if (p >= 2000) return '🔍 Senior Investigator';
+  if (p >= 500)  return '📰 Field Correspondent';
+  return '🌱 Rookie Reporter';
+}
+function ini(n) {
+  if (!n) return '?';
+  const w = n.trim().split(/\s+/);
+  return (w.length > 1 ? w[0][0] + w[w.length-1][0] : n.substring(0,2)).toUpperCase();
+}
+function showAlert(id, type, msg, ms) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = '<div class="al al' + type + '">' + esc(msg) + '</div>';
+  if (ms !== 0) setTimeout(function(){ el.innerHTML = ''; }, ms || 5000);
+}
+function showSync() {
+  const el = document.getElementById('syncEl');
+  el.classList.add('on');
+  setTimeout(function(){ el.classList.remove('on'); }, 1200);
+}
+
+// FIREBASE
+async function fbGet(path) {
+  try {
+    const r = await fetch(DB + '/' + path + '.json', {cache: 'no-store'});
+    if (!r.ok) return null;
+    return await r.json();
+  } catch(e) { return null; }
+}
+async function fbSet(path, data) {
+  try {
+    const r = await fetch(DB + '/' + path + '.json', {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    });
+    return r.ok;
+  } catch(e) { return false; }
+}
+async function fbPatch(path, data) {
+  try {
+    const r = await fetch(DB + '/' + path + '.json', {
+      method: 'PATCH',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    });
+    return r.ok;
+  } catch(e) { return false; }
+}
+async function fbPush(path, data) {
+  try {
+    const r = await fetch(DB + '/' + path + '.json', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    });
+    if (!r.ok) return null;
+    return (await r.json()).name;
+  } catch(e) { return null; }
+}
+async function fbDel(path) {
+  try { await fetch(DB + '/' + path + '.json', {method: 'DELETE'}); } catch(e) {}
+}
+
+// TAB NAVIGATION
+function goTab(btn, tab) {
+  document.querySelectorAll('.ntab').forEach(function(t){ t.classList.remove('on'); });
+  document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('on'); });
+  btn.classList.add('on');
+  document.getElementById('v-' + tab).classList.add('on');
+  curTab = tab;
+  if (tab === 'challenge') renderChallenge();
+  if (tab === 'submit')    updateSubmitRef();
+  if (tab === 'chat')      renderChat();
+  if (tab === 'board')     renderLB();
+  if (tab === 'training')  initTraining();
+  if (tab === 'editor' && isEd) { loadEdSubs(); loadEdReports(); loadPast(); }
+}
+
+function setHist(h) {
+  showHist = h;
+  document.getElementById('tLive').classList.toggle('on', !h);
+  document.getElementById('tHist').classList.toggle('on', h);
+  renderChallenge();
+}
+
+// CHALLENGE
+async function renderChallenge() {
+  showSync();
+  const dot = document.getElementById('liveDot');
+  const stat = document.getElementById('liveStatus');
+  const el = document.getElementById('challengeArea');
+  const pre = document.getElementById('topSubs');
+
+  const chData = await fbGet('challenges');
+  const subsData = await fbGet('submissions');
+  const subs = arr(subsData);
+
+  if (!chData) {
+    el.innerHTML = '<div class="empty"><div class="empty-ic">📡</div><b>Challenge မရှိသေးပါ</b><p>Editor က challenge ပို့ပြီးမှ ဒီမှာပေါ်လာမယ်</p></div>';
+    dot.className = 'hdr-dot';
+    stat.textContent = 'WAIT';
+    pre.innerHTML = '';
+    return;
+  }
+
+  const all = arr(chData).sort(function(a,b){ return b.postedAt - a.postedAt; });
+  const live = all.find(function(c){ return c.status === 'active'; });
+
+  if (showHist) {
+    dot.className = 'hdr-dot';
+    stat.textContent = 'ARCHIVE';
+    const closed = all.filter(function(c){ return c.status === 'closed'; });
+    if (!closed.length) {
+      el.innerHTML = '<div class="empty"><div class="empty-ic">📋</div><b>ယခင် challenges မရှိသေးပါ</b></div>';
+      pre.innerHTML = '';
+      return;
+    }
+    el.innerHTML = closed.map(function(ch) {
+      const cs = subs.filter(function(s){ return s.challengeId === ch._id; });
+      const top = cs.filter(function(s){ return s.points > 0; }).sort(function(a,b){ return b.points - a.points; })[0];
+      return '<div class="card dim"><div class="ctop"><span class="ctag grey">ပြီး · ' + esc(ch.type) + '</span></div>' +
+        '<p class="ctitle">' + esc(ch.title) + '</p>' +
+        '<div class="cmeta"><span>📅 ' + ago(ch.postedAt) + '</span><span>👥 ' + cs.length + '</span>' +
+        (top ? '<span style="color:var(--gold)">🏆 ' + esc(top.username) + '</span>' : '') + '</div></div>';
+    }).join('');
+    pre.innerHTML = '';
+    return;
+  }
+
+  if (!live) {
+    el.innerHTML = '<div class="empty"><div class="empty-ic">📡</div><b>လက်ရှိ challenge မရှိပါ</b><p>Session ပိတ်ထားသည်</p></div>';
+    dot.className = 'hdr-dot';
+    stat.textContent = 'CLOSED';
+    pre.innerHTML = '';
+    return;
+  }
+
+  const ls = subs.filter(function(s){ return s.challengeId === live._id; });
+  const vf = ls.filter(function(s){ return s.points > 0; }).sort(function(a,b){ return b.points - a.points; });
+
+  el.innerHTML = '<div class="card"><div class="ctop"><span class="ctag">' + esc(live.type) + '</span><span class="clive">LIVE</span></div>' +
+    '<p class="ctitle">' + esc(live.title) + '</p>' +
+    '<p class="cbody">' + esc(live.content) + '</p>' +
+    '<div class="cmeta"><span>🕐 ' + ago(live.postedAt) + '</span><span>👥 ' + ls.length + '</span>' +
+    (vf.length ? '<span style="color:var(--green)">✓ ' + vf.length + '</span>' : '') + '</div></div>';
+
+  dot.className = 'hdr-dot on';
+  stat.textContent = 'LIVE';
+
+  if (vf.length) {
+    pre.innerHTML = '<div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.5rem">Top Submissions</div>' +
+      vf.slice(0,3).map(function(s) {
+        return '<div class="scard"><div class="shead"><span class="sname">' + esc(s.username) + '</span><span class="spts">+' + s.points + 'pts</span></div>' +
+          '<div class="sbody">' + esc(s.content.substring(0,150)) + (s.content.length > 150 ? '...' : '') + '</div></div>';
+      }).join('');
+  } else {
+    pre.innerHTML = '';
+  }
+}
+
+async function updateSubmitRef() {
+  const chData = await fbGet('challenges');
+  const el = document.getElementById('submitRef');
+  if (!chData) { el.innerHTML = '<div class="al alw">Active challenge မရှိပါ</div>'; return; }
+  const live = arr(chData).find(function(c){ return c.status === 'active'; });
+  if (live) {
+    el.innerHTML = '<div style="background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--red);border-radius:0 8px 8px 0;padding:9px 13px;margin-bottom:.875rem">' +
+      '<div style="font-size:10px;font-weight:700;color:var(--red3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:3px">Current Challenge</div>' +
+      '<div style="font-size:13px;color:var(--text2)">' + esc(live.title) + '</div></div>';
+  } else {
+    el.innerHTML = '<div class="al alw">Active challenge မရှိပါ — Editor က challenge ပို့ပြီးမှ တင်ပါ</div>';
+  }
+}
+
+async function doSubmit() {
+  const btn = document.getElementById('subBtn');
+  const un = document.getElementById('un').value.trim();
+  const ev = document.getElementById('evidence').value.trim();
+  if (!un) { showAlert('submitAlert','e','Username ထည့်ပါ'); return; }
+  if (ev.length < 10) { showAlert('submitAlert','e','အကြောင်းအရာ ပိုအသေးစိတ်ရေးပါ'); return; }
+  btn.disabled = true; btn.textContent = 'တင်နေသည်...';
+  const chData = await fbGet('challenges');
+  const live = chData ? arr(chData).find(function(c){ return c.status === 'active'; }) : null;
+  if (!live) { showAlert('submitAlert','e','Active challenge မရှိပါ'); btn.disabled = false; btn.textContent = 'အဖြေတင်မည်'; return; }
+  const subsData = await fbGet('submissions');
+  if (arr(subsData).find(function(s){ return s.username === un && s.challengeId === live._id; })) {
+    showAlert('submitAlert','e','"' + un + '" က တစ်ကြိမ်တင်ပြီးပြီ');
+    btn.disabled = false; btn.textContent = 'အဖြေတင်မည်'; return;
+  }
+  const key = await fbPush('submissions', {challengeId: live._id, username: un, content: ev, timestamp: Date.now(), points: 0});
+  if (key) {
+    localStorage.setItem('tnv_un', un);
+    document.getElementById('evidence').value = '';
+    showAlert('submitAlert','s','တင်ပြီးပါပြီ ✓  Editor review ကို စောင့်ပါ');
+    showSync();
+  } else {
+    showAlert('submitAlert','e','Error — network စစ်ကြည့်ပြီး ထပ်ကြိုးစားပါ');
+  }
+  btn.disabled = false; btn.textContent = 'အဖြေတင်မည်';
+}
+
+async function doReport() {
+  const btn = document.getElementById('repBtn');
+  const title = document.getElementById('repTitle').value.trim();
+  const loc = document.getElementById('repLoc').value.trim();
+  const body = document.getElementById('repBody').value.trim();
+  if (!title && !body) { showAlert('reportAlert','e','ခေါင်းစဉ် သို့မဟုတ် အကြောင်းအရာ ထည့်ပါ'); return; }
+  btn.disabled = true; btn.textContent = 'တင်နေသည်...';
+  const key = await fbPush('reports', {title: title, location: loc, body: body, timestamp: Date.now(), status: 'pending'});
+  if (key) {
+    document.getElementById('repTitle').value = '';
+    document.getElementById('repLoc').value = '';
+    document.getElementById('repBody').value = '';
+    showAlert('reportAlert','s','သတင်းတင်ပြီးပါပြီ ✓  Editor review ကို စောင့်ပါ');
+    showSync();
+  } else {
+    showAlert('reportAlert','e','Error');
+  }
+  btn.disabled = false; btn.textContent = 'သတင်းတင်မည်';
+}
+
+async function renderChat() {
+  showSync();
+  const msgs = await fbGet('chat');
+  const el = document.getElementById('chatMsgs');
+  if (!msgs) {
+    el.innerHTML = '<div class="empty"><div class="empty-ic">💬</div><b>Chat ဗလာနေသေးတယ်</b><p>ပထမဆုံး message ပို့ပါ</p></div>';
+    return;
+  }
+  const list = arr(msgs).sort(function(a,b){ return a.timestamp - b.timestamp; });
+  const latest = list.length ? list[list.length-1].timestamp : 0;
+  if (latest <= lastChatTs && el.children.length > 1) return;
+  lastChatTs = latest;
+  el.innerHTML = list.map(function(m) {
+    return '<div class="msg"><div class="msg-av ' + (m.isEd ? 'ed' : '') + '">' + esc(ini(m.username)) + '</div>' +
+      '<div class="msg-bd"><div class="msg-mt"><span class="msg-un ' + (m.isEd ? 'ed' : '') + '">' + esc(m.username) + '</span>' +
+      (m.isEd ? '<span class="msg-badge">EDITOR</span>' : '') +
+      '<span class="msg-t">' + ago(m.timestamp) + '</span></div>' +
+      '<div class="msg-tx ' + (m.isEd ? 'ed' : '') + '">' + esc(m.message) + '</div></div></div>';
+  }).join('');
+  el.scrollTop = el.scrollHeight;
+}
+
+async function doChat() {
+  const un = document.getElementById('chatUn').value.trim();
+  const msg = document.getElementById('chatMsg').value.trim();
+  if (!un) { alert('အမည်ထည့်ပါ'); return; }
+  if (!msg) return;
+  document.getElementById('chatMsg').value = '';
+  localStorage.setItem('tnv_chat_un', un);
+  await fbPush('chat', {username: un, message: msg, timestamp: Date.now(), isEd: isEd});
+  lastChatTs = 0;
+  renderChat();
+}
+
+async function renderLB() {
+  showSync();
+  const lb = await fbGet('leaderboard');
+  const el = document.getElementById('lbList');
+  const entries = lb ? Object.entries(lb).filter(function(e){ return e[1] > 0; }).sort(function(a,b){ return b[1]-a[1]; }) : [];
+  if (!entries.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-ic">🏆</div><b>အဆင့်မှတ်တမ်း မရှိသေးပါ</b><p>ပထမ points ရတဲ့သူ ဒီမှာပေါ်လာမယ်</p></div>';
+    return;
+  }
+  const cls = function(i){ return i===0?'g':i===1?'sv':i===2?'br':''; };
+  const rk = function(i){ return i===0?'①':i===1?'②':i===2?'③':i+1; };
+  el.innerHTML = entries.map(function(e, i) {
+    return '<div class="lb-row ' + (i<3?'top':'') + '"><span class="lb-rk ' + cls(i) + '">' + rk(i) + '</span>' +
+      '<div class="lb-inf"><div class="lb-nm">' + esc(e[0]) + '</div><div class="lb-tr">' + tier(e[1]) + '</div></div>' +
+      '<span class="lb-pts">' + e[1] + '</span></div>';
+  }).join('');
+}
+
+// EDITOR
+function doEdLogin() {
+  if (document.getElementById('edPw').value === PASS) {
+    isEd = true;
+    document.getElementById('edLogin').style.display = 'none';
+    document.getElementById('edPanel').style.display = 'block';
+    loadEdSubs(); loadEdReports(); loadPast();
+  } else {
+    showAlert('edAlert','e','Password မမှန်ပါ');
+    document.getElementById('edPw').value = '';
+  }
+}
+
+async function doPost() {
+  const title = document.getElementById('cTitle').value.trim();
+  const content = document.getElementById('cBody').value.trim();
+  const type = document.getElementById('cType').value;
+  if (!title || !content) { showAlert('edAlert','e','ခေါင်းစဉ်နှင့် အသေးစိတ် ထည့်ပါ'); return; }
+  const id = Date.now().toString();
+  if (await fbSet('challenges/' + id, {id: id, title: title, content: content, type: type, status: 'active', postedAt: Date.now()})) {
+    document.getElementById('cTitle').value = '';
+    document.getElementById('cBody').value = '';
+    showAlert('edAlert','s','Challenge တင်ပြီးပါပြီ ✓');
+    loadEdSubs(); loadPast();
+  } else { showAlert('edAlert','e','Error'); }
+}
+
+async function doClose() {
+  const chData = await fbGet('challenges');
+  const live = chData ? arr(chData).find(function(c){ return c.status === 'active'; }) : null;
+  if (!live) { showAlert('edAlert','w','Active challenge မရှိပါ'); return; }
+  await fbPatch('challenges/' + live._id, {status: 'closed'});
+  showAlert('edAlert','s','Session ပိတ်ပြီးပါပြီ');
+  loadPast();
+}
+
+async function loadEdSubs() {
+  showSync();
+  const chData = await fbGet('challenges');
+  const subsData = await fbGet('submissions');
+  const el = document.getElementById('edSubs');
+  const badge = document.getElementById('subCount');
+  const live = chData ? arr(chData).find(function(c){ return c.status === 'active'; }) : null;
+  const subs = arr(subsData).filter(function(s){ return live && s.challengeId === live._id; }).sort(function(a,b){ return b.timestamp - a.timestamp; });
+  badge.textContent = subs.length ? '(' + subs.length + ')' : '';
+  if (!subs.length) { el.innerHTML = '<div style="font-size:13px;color:var(--text3)">' + (live ? 'Submissions မရှိသေးပါ' : 'Active challenge မရှိပါ') + '</div>'; return; }
+  el.innerHTML = subs.map(function(s) {
+    return '<div class="scard"><div class="shead"><span class="sname">' + esc(s.username) + '</span><span class="stime">' + ago(s.timestamp) + '</span></div>' +
+      '<div class="sbody" style="margin:5px 0 7px">' + esc(s.content) + '</div>' +
+      '<div class="award-r"><input class="pts-in" type="number" id="pts_' + esc(s._id) + '" min="0" max="200" placeholder="pts" value="' + (s.points||'') + '">' +
+      '<button class="btna" onclick="doAward(\'' + esc(s._id) + '\',\'' + esc(s.username) + '\',' + (s.points||0) + ')">Points ပေး</button>' +
+      (s.points > 0 ? '<span class="vmark">✓ ' + s.points + 'pts</span>' : '') + '</div></div>';
+  }).join('');
+}
+
+async function doAward(fk, un, old) {
+  const pEl = document.getElementById('pts_' + fk);
+  if (!pEl) return;
+  const pts = parseInt(pEl.value) || 0;
+  await fbPatch('submissions/' + fk, {points: pts});
+  const lb = await fbGet('leaderboard') || {};
+  lb[un] = Math.max(0, (lb[un]||0) - old + pts);
+  await fbSet('leaderboard', lb);
+  showAlert('edAlert','s', un + ' ကို ' + pts + 'pts ပေးပြီးပါပြီ ✓');
+  loadEdSubs();
+}
+
+async function loadEdReports() {
+  const reps = await fbGet('reports');
+  const el = document.getElementById('edReports');
+  const badge = document.getElementById('repCount');
+  const list = arr(reps).sort(function(a,b){ return b.timestamp - a.timestamp; });
+  badge.textContent = list.length ? '(' + list.length + ')' : '';
+  if (!list.length) { el.innerHTML = '<div style="font-size:13px;color:var(--text3)">Reports မရှိသေးပါ</div>'; return; }
+  el.innerHTML = list.map(function(r) {
+    return '<div class="scard"><div class="shead"><span class="sname">' + esc(r.title||'(ခေါင်းစဉ်မပါ)') + '</span><span class="stime">' + ago(r.timestamp) + '</span></div>' +
+      (r.location ? '<div style="font-size:11px;color:var(--red3);margin-bottom:3px">📍 ' + esc(r.location) + '</div>' : '') +
+      '<div class="sbody">' + esc(r.body) + '</div>' +
+      '<div class="award-r" style="margin-top:7px"><button class="btna" onclick="markRep(\'' + esc(r._id) + '\')">✓ စစ်ဆေးပြီး</button>' +
+      '<button class="btnd" style="font-size:11px;padding:4px 10px" onclick="delRep(\'' + esc(r._id) + '\')">ဖျက်</button></div></div>';
+  }).join('');
+}
+
+async function markRep(id) { await fbPatch('reports/' + id, {status: 'reviewed'}); loadEdReports(); }
+async function delRep(id) { await fbDel('reports/' + id); loadEdReports(); }
+
+async function loadPast() {
+  const chData = await fbGet('challenges');
+  const el = document.getElementById('pastCh');
+  if (!chData) { el.innerHTML = '<div style="font-size:13px;color:var(--text3)">မရှိသေးပါ</div>'; return; }
+  const closed = arr(chData).filter(function(c){ return c.status === 'closed'; }).sort(function(a,b){ return b.postedAt - a.postedAt; });
+  if (!closed.length) { el.innerHTML = '<div style="font-size:13px;color:var(--text3)">မရှိသေးပါ</div>'; return; }
+  el.innerHTML = closed.map(function(ch) {
+    return '<div class="scard" style="margin-bottom:.5rem"><div class="shead"><span class="sname" style="font-size:12px">' +
+      esc(ch.title.substring(0,45)) + (ch.title.length>45?'...':'') +
+      '</span><span class="stime">' + ago(ch.postedAt) + '</span></div></div>';
+  }).join('');
+}
+
+async function doReset() {
+  if (!confirm('Data အားလုံး ဖျက်မှာ သေချာလား?')) return;
+  await Promise.all([fbDel('challenges'), fbDel('submissions'), fbDel('leaderboard')]);
+  showAlert('edAlert','s','Reset ပြီးပါပြီ');
+  loadEdSubs(); loadPast();
+}
+
+async function doClearChat() {
+  if (!confirm('Chat messages ဖျက်မှာ သေချာလား?')) return;
+  await fbDel('chat');
+  lastChatTs = 0;
+  showAlert('edAlert','s','Chat ဖျက်ပြီးပါပြီ');
+  renderChat();
+}
+
+// CHIPS
+function renderChips() {
+  const shuffled = ALIASES.slice().sort(function(){ return Math.random() - .5; }).slice(0,5);
+  document.getElementById('chips').innerHTML = shuffled.map(function(a) {
+    return '<span class="chip" onclick="document.getElementById(\'un\').value=\'' + a + '\';document.getElementById(\'chatUn\').value=\'' + a + '\'">' + a + '</span>';
+  }).join('');
+}
+
+// TRAINING
+var curMod = 0;
+var curLesson = 0;
+var quizDone = false;
+
+var MODS = [
+  {
+    name: '📰 အခြေခံသတင်းရေးနည်း',
+    src: 'BBC College of Journalism, Thomson Foundation, Internews',
+    lessons: [
+      {
+        title: '5W1H — သတင်း၏ အခြေခံ',
+        icon: '❓',
+        body: '<p><b>BBC College of Journalism</b> နှင့် <b>Thomson Foundation</b> တို့၏ standard အရ — သတင်းတစ်ပုဒ်ပြည့်စုံဖို့ မေးခွန်း ၆ ခု ဖြေနိုင်ရမည်—</p><p><b>Who (ဘယ်သူ)</b> — ဖြစ်ပွားမှုနှင့် ဆက်နွှယ်သောသူ ဘယ်သူများ?<br><b>What (ဘာ)</b> — အဓိက အဖြစ်အပျက်က ဘာလဲ?<br><b>When (ဘယ်အချိန်)</b> — တိကျသောအချိန်နှင့် ရက်စွဲ<br><b>Where (ဘယ်နေရာ)</b> — တိကျသောတည်နေရာ<br><b>Why (ဘာကြောင့်)</b> — ဖြစ်ရခြင်းအကြောင်းရင်း<br><b>How (ဘယ်လို)</b> — ဘယ်လိုဖြစ်ခဲ့သနည်း?</p><p>ဤမေးခွန်း ၆ ခုအားလုံး ဖြေနိုင်မှသာ သတင်းပြည့်စုံသည်ဟု ဆိုနိုင်သည်။ ငြိမ်းချမ်းရေးသတင်းနှင့် conflict reporting တွင် <b>Why</b> သည် အထူးအရေးကြီးသည်။</p>',
+        quiz: {q:'5W1H တွင် W ဘယ်နှစ်ခုရှိသနည်း?', opts:['3','4','5','6'], ans:2}
+      },
+      {
+        title: 'Inverted Pyramid — သတင်းဖွဲ့စည်းပုံ',
+        icon: '🔺',
+        body: '<p><b>Inverted Pyramid</b> ဆိုသည်မှာ သတင်းရေးသားမှု၌ အသုံးအများဆုံး ဖွဲ့စည်းပုံဖြစ်ပြီး <b>Reuters</b>၊ <b>AP</b>၊ <b>BBC</b> တို့ standard ဖြစ်သည်။</p><p><b>▼ Lead (ပထမပိုဒ်)</b> — အရေးကြီးဆုံး သတင်းအချက်၊ 5W1H အနှစ်ချုပ်<br><b>▼ Body</b> — ထောက်ကူသောအချက်များ၊ Quote များ<br><b>▼ Background</b> — နောက်ခံသတင်း၊ ဆက်စပ်အချက်</p><p><b>Lead paragraph ရေးနည်း</b> — ဖတ်သူသည် ပထမဆုံးဝါကျပြီးချိန်တွင် ဘာဖြစ်ခဲ့သည်ဆိုသည်ကို သိနိုင်ရမည်။</p><p>ဥပမာ — <i>"မကွေးတိုင်းဒေသကြီးတွင် တနင်္လာနေ့ ညနေပိုင်းက စစ်ကောင်စီတပ်ဖွဲ့က ကျောင်းသုံးလုံးကို မီးရှို့ဖျက်ဆီးခဲ့ပြီး ကျောင်းသား ၃,၀၀၀ ကျော် ပညာသင်ကြားမှု ထိခိုက်ကြောင်း ဒေသခံများ ပြောသည်။"</i></p>',
+        quiz: {q:'Inverted Pyramid တွင် Lead paragraph ၏ ရည်ရွယ်ချက်ကဘာလဲ?', opts:['နောက်ခံသတင်းပေး','အဓိကသတင်းအချက်ပေး','Editor ကိုရှင်းပြ','ကြော်ငြာထည့်'], ans:1}
+      },
+      {
+        title: 'Source ရွေးချယ်နည်းနှင့် အင်တာဗျူး',
+        icon: '🎤',
+        body: '<p><b>Internews</b> နှင့် <b>BBC Media Action</b> ၏ conflict reporting guide အရ —</p><p><b>Source အမျိုးအစားများ</b><br>▸ <b>Primary source</b> — ဖြစ်ပွားမှုကို တိုက်ရိုက်ကြုံသောသူ<br>▸ <b>Secondary source</b> — တတိယသူမှ ကြားသိသောသူ<br>▸ <b>Expert source</b> — ဆိုင်ရာကျွမ်းကျင်သူ</p><p><b>Conflict Zone Source Protocol</b><br>▸ Source ၂ ခုမပြည့်မချင်း publish မလုပ်ပါ<br>▸ Source ၏ ဘက်လိုက်မှုကို အမြဲစစ်ဆေးပါ<br>▸ Anonymous source — Editor ၏ ခွင့်ပြုချက်ဖြင့်သာ<br>▸ Source ၏ ဘေးကင်းရေး ဦးစားပေးပါ</p><p><b>Open-ended questions</b> — "ဘာဖြစ်ခဲ့သလဲ?" သည် "စစ်တပ်ကဖြစ်ကြောင်း မှန်ပါသလား?" ထက် ပိုကောင်းသည်</p>',
+        quiz: {q:'Conflict zone တွင် publish မလုပ်မီ source အနည်းဆုံး ဘယ်နှစ်ခုလိုသနည်း?', opts:['1','2','3','4'], ans:1}
+      },
+      {
+        title: 'Headline နှင့် Lead ရေးနည်း',
+        icon: '✏️',
+        body: '<p><b>Reuters Handbook</b> နှင့် <b>AP Stylebook</b> standard —</p><p><b>ကောင်းသော Headline</b><br>▸ Active verb ပါသည် ("ရှို့" သည် "ဖျက်ဆီးခြင်းကို ခံရ" ထက်ကောင်း)<br>▸ တိကျပြတ်သားသည် — မည်သည့်ကိန်းဂဏန်း ကြိုက်ပါ<br>▸ Clickbait မဟုတ် — sensationalize မလုပ်<br>▸ မြန်မာ context တွင် —စာလုံး ၁၂-၁၅ ခုအတွင်း</p><p><b>ဥပမာ</b><br>✓ "မကွေးမြို့တွင် စစ်ကောင်စီ ကျောင်း ၃ လုံးမီးရှို့ — ကျောင်းသားပေါင်း ၃,၀၀၀ ကျော် ထိခိုက်"<br>✗ "ကြောက်စရာကောင်းသော ဖျက်ဆီးမှု ဖြစ်ပေါ်"</p><p><b>Numbers rule</b> — ၁-၉ ကို စာဖြင့်ရေး၊ ၁၀ အထက် ဂဏန်းဖြင့်ရေး (AP style)</p>',
+        quiz: {q:'ကောင်းသော headline တွင် ဘာပါသင့်သနည်း?', opts:['Clickbait words','Active verb','Question mark','Emoji'], ans:1}
+      },
+      {
+        title: 'Conflict-Sensitive Reporting',
+        icon: '⚔️',
+        body: '<p><b>Internews Conflict Reporting Guide</b> နှင့် <b>Dart Center for Journalism & Trauma</b> standard —</p><p><b>Conflict reporting ၌ ရှောင်ရမည့်အချက်များ</b><br>▸ ဘက်တစ်ဘက်၏ propaganda ကို verify မလုပ်ဘဲ ဖြန့်ဝေခြင်း<br>▸ Casualty figures ကို တစ်ဖွဲ့တည်း source မှသာ ယူခြင်း<br>▸ လူမျိုးရေး၊ ဘာသာရေး stereotyping<br>▸ ကလေးများ၏ ဓာတ်ပုံ/အမည် ဖော်ပြခြင်း (ကလေးများ၏ ကာကွယ်ရေး)</p><p><b>Trauma-informed reporting</b> — ဒုက္ခသည်များ၊ မုဒိမ်းကျင့်ခံရသူများ၊拷 မောင်ဆွဲသွားသူများ — ကိုင်တွယ်ရာတွင် အထူးသတိထားပါ</p><p><b>Myanmar Context</b> — Two sides တင်ဆက်ဖို့ SAC-controlled zone ၌ ဝင်ရောက်ခွင့်မရဘဲ report လုပ်ရသောအခါ ဤကန့်သတ်ချက်ကို ဖော်ပြပါ</p>',
+        quiz: {q:'Conflict reporting ၌ casualty figures ကို ဘယ်လိုအတည်ပြုသင့်သနည်း?', opts:['တစ်ဖွဲ့တည်းကနေ','နှစ်ဖွဲ့ minimum ကနေ','Social media မှ','Editor ကဆုံးဖြတ်'], ans:1}
+      }
+    ]
+  },
+  {
+    name: '🔍 Fact-Checking',
+    src: 'First Draft, IFCN, Google News Lab',
+    lessons: [
+      {
+        title: 'Fact-checking Fundamentals',
+        icon: '🔬',
+        body: '<p><b>International Fact-Checking Network (IFCN)</b> principles အရ —</p><p>Fact-checking ဆိုသည်မှာ claim တစ်ခုကို original source နှင့် စစ်ဆင်ခြင်းဖြစ်သည်။ Fact-checker သည် reporter မဟုတ် — <b>verifier</b> ဖြစ်သည်။</p><p><b>Fact-check လုပ်ရမည့် ၄ မျိုး</b><br>▸ <b>Claim</b> — "တပ်မတော် ၁,၀၀၀ ဦး အနားယူသည်" ကဲ့သို့ assertive statement<br>▸ <b>Image/Video</b> — context မှားနေသည်မဟုတ်မည်ဆိုသည်<br>▸ <b>Quote</b> — တစ်ယောက်ဦးမှ ဆိုသည်ဟုဆိုသော ဆိုဆောင်ချက်<br>▸ <b>Statistics</b> — ကိန်းဂဏန်းနှင့် ရာခိုင်နှုန်း</p><p><b>SIFT Method</b> (First Draft)<br><b>S</b>top — ချက်ချင်း share မလုပ်<br><b>I</b>nvestigate the source — ဘယ်ကဆိုလဲ စစ်ဆေး<br><b>F</b>ind better coverage — တခြား source ကြည့်<br><b>T</b>race claims — မူလ source ကိုရှာ</p>',
+        quiz: {q:'SIFT method ၏ S ဆိုသည်မှာ ဘာကိုဆိုလိုသနည်း?', opts:['Share','Stop','Source','Search'], ans:1}
+      },
+      {
+        title: 'Image & Video Verification',
+        icon: '🖼️',
+        body: '<p><b>First Draft Professional Programme</b> နှင့် <b>Bellingcat</b> methodology —</p><p><b>Reverse Image Search</b><br>▸ Google Images — images.google.com → Camera icon<br>▸ TinEye — tineye.com (ပိုကောင်းသောရလဒ်)<br>▸ Yandex Images — ai.yandex.com (Asia context ၌ ပိုကောင်း)</p><p><b>စစ်ဆေးရမည့်အချက်</b><br>▸ ပုံ၏ မူလ date — ဒီပုံ ကြာပြီလား?<br>▸ Location — ဒီနေရာ မှန်ပါသလား? (shadow direction, architecture)<br>▸ Context — ဒီပြဿနာနှင့် သက်ဆိုင်ပါသလား?</p><p><b>Video verification</b><br>▸ InVID / WeVerify tool သုံးပါ<br>▸ Key frame ထုတ်ပြီး reverse search<br>▸ Metadata စစ်ဆေးပါ</p><p><b>Myanmar context</b> — စစ်တပ်က old footage ကို new conflict ဟုဖျောက်ဖျက်ကာ သုံးသည်</p>',
+        quiz: {q:'Video verification အတွက် ဘယ် tool ကောင်းသနည်း?', opts:['TikTok','InVID / WeVerify','Twitter','Google Maps'], ans:1}
+      },
+      {
+        title: 'Mis/Dis/Malinformation',
+        icon: '⚠️',
+        body: '<p><b>UNESCO Media & Information Literacy</b> framework —</p><p><b>Misinformation</b> — မမှန်ကန်သောသတင်း၊ ရည်ရွယ်ချက်မပါ<br>ဥပမာ — မဟုတ်မမှန် ဓာတ်ပုံကို မသိဘဲ share လုပ်ခြင်း</p><p><b>Disinformation</b> — မမှန်ကန်သောသတင်း၊ ရည်ရွယ်ချက်ဖြင့် ဖြန့်ဝေ<br>ဥပမာ — SAC ၏ "ပဋိပက္ခမဖြစ်ပွား" ဟု ငြင်းဆိုသောထုတ်ပြန်ချက်</p><p><b>Malinformation</b> — မှန်ကန်သောသတင်းဖြစ်သော်လည်း ထိခိုက်နစ်နာစေရန် ဖြန့်ဝေ<br>ဥပမာ — လူ့ပဏ္ဏာဆွဲသွားသူ၏ ကိုယ်ရေးကိုယ်တာ ဓာတ်ပုံ ဖြန့်ဝေခြင်း</p><p><b>စစ်ကောင်စီ Disinformation နမူနာများ</b><br>▸ "Terrorist" labeling ကို resistance fighters များအပေါ် သုံး<br>▸ Airstrikes ကို denial သို့မဟုတ် fabricated justification ဖြင့် ဖုံးကွယ်<br>▸ State media မှ casualty figures manipulation</p>',
+        quiz: {q:'ရည်ရွယ်ချက်ဖြင့် မမှန်သောသတင်း ဖြန့်ဝေခြင်းကို ဘာဟုခေါ်သနည်း?', opts:['Misinformation','Malinformation','Disinformation','Satire'], ans:2}
+      },
+      {
+        title: 'Open Source Intelligence (OSINT)',
+        icon: '🌐',
+        body: '<p><b>Bellingcat OSINT Guide</b> နှင့် <b>First Draft</b> methodology —</p><p><b>OSINT ဆိုသည်မှာ</b> publicly available information ကို systematically ရှာဖွေ၊ စစ်ဆေးခြင်း</p><p><b>Myanmar Conflict Reporting OSINT Tools</b><br>▸ <b>Google Earth Pro</b> — satellite imagery (free)<br>▸ <b>Sentinel Hub</b> — ရွာမီးရှို့မှု satellite စစ်ဆေး<br>▸ <b>Telegram</b> — original posts ရှာဖွေ<br>▸ <b>Archive.org</b> — ဖျက်ထားသော page restore<br>▸ <b>Wayback Machine</b> — ဖျက်ထားသော website ကြည့်</p><p><b>Geolocation</b> — ဓာတ်ပုံ၌ ပြထားသော landmark၊ shadow direction၊ vegetation ကို Google Earth နှင့် တိုက်ဆိုင်စစ်ဆေး</p><p><b>Data partners (TNV)</b> — AAPP နှင့် Data for Myanmar ကဲ့သို့ verified data ကိုအသုံးပြုပါ</p>',
+        quiz: {q:'Myanmar တွင် ရွာမီးရှို့မှု satellite ဖြင့် verify ဖို့ ဘာ tool သုံးနိုင်သနည်း?', opts:['Instagram','Sentinel Hub','Facebook','WhatsApp'], ans:1}
+      }
+    ]
+  },
+  {
+    name: '⚖️ သတင်းမီဒီယာကျင့်ဝတ်',
+    src: 'SPJ Code of Ethics, IFJ Global Charter, BBC Editorial Guidelines',
+    lessons: [
+      {
+        title: 'SPJ Code of Ethics — ၄ မူ',
+        icon: '📜',
+        body: '<p><b>Society of Professional Journalists (SPJ)</b> Code of Ethics ၂၀၁၄ — ကမ္ဘာ့ သတင်းမီဒီယာ အကျင့်ဝတ်စာတမ်းအများဆုံး ကိုးကားခြင်း ခံရသောစာတမ်း —</p><p><b>မူ ၁ — Seek Truth and Report It (အမှန်တရားကို ရှာဖွေ၊ ရင်ဆိုင်)</b><br>▸ Report လုပ်မည့် fact တိုင်းကို verify လုပ်ပါ<br>▸ Never distort facts — ဓာတ်ပုံ၊ ဗီဒီယို context ပါ မပြောင်းမလဲနဲ့<br>▸ Original source ကိုသာ သုံးပါ<br>▸ Rumor ကို သတင်းဟု တင်ဆက်မပါနဲ့</p><p><b>မူ ၂ — Minimize Harm (ထိခိုက်မှုကို လျှော့ချ)</b><br>▸ ကလေးများ၊ မုဒိမ်းကျင့်ခံရသူများ — အမည်၊ ဓာတ်ပုံ မဖော်ပြ<br>▸ Grief ဒုက္ခ ကြုံနေသူများနှင့် sensitivity ဖြင့် ဆက်ဆံ<br>▸ ပြည်သူ့အကျိုးအတွက်သာ ကိုယ်ပိုင်ဝင်ရောက်မှု</p><p><b>မူ ၃ — Act Independently (လွတ်လပ်စွာ ဆောင်ရွက်)</b><br>▸ Advertiser၊ Political party ၏ pressure ကို ငြင်းဆန်<br>▸ Gift၊ bribe ကို လက်မခံပါ<br>▸ ကိုယ်ပိုင် conflict of interest ကို ဖော်ပြပါ</p><p><b>မူ ၄ — Be Accountable (တာဝန်ယူ)</b><br>▸ Error ဖြစ်ရင် ချက်ချင်း correction ထုတ်ပြန်<br>▸ Reader/viewer feedback ကို ဖွင့်ထားပါ</p>',
+        quiz: {q:'SPJ Code ၏ "Minimize Harm" မူ အရ ကလေးများ victim ဖြစ်ခဲ့ရင် ဘာမလုပ်သင့်သနည်း?', opts:['Story တင်','အမည်နှင့်ဓာတ်ပုံ မဖော်ပြ','OSINT သုံး','Editor ကိုမပြော'], ans:1}
+      },
+      {
+        title: 'IFJ Global Charter of Ethics',
+        icon: '🌍',
+        body: '<p><b>International Federation of Journalists (IFJ)</b> Global Charter of Ethics ၂၀၁၉ — Article ၁၆ ပါ ကမ္ဘာ့သတင်းသမားများ ကျင့်ဝတ်ဆိုင်ရာ ကြေညာချက် —</p><p><b>အဓိကပြဌာန်းချက်များ</b><br>▸ သတင်းသမားသည် ဘယ်အကျိုးစီးပွားကိုမှ ဖိနှိပ်မှုမပြုပါ — ပြည်သူ့ right to know သာ ဦးစားပေး<br>▸ Fact ကိုသာ ကိုးကား — suppress မလုပ်<br>▸ Fair methods သာ သုံး — hidden recording ကို public interest မဟုတ်မချင်း မသုံး<br>▸ Source ၏ confidentiality ကို ကာကွယ်ပါ<br>▸ "Off the record" agreement ကို လေးစားပါ</p><p><b>Conflict of Interest</b> — ကိုယ်ပြဿနာနှင့် ဆက်နွှယ်သော story ကို cover မလုပ်ပါနဲ့ — Editor ကိုပြောပါ</p><p><b>Source protection</b> — မြန်မာပြည်တွင်း source ၏ အမည်/location ကို Editorial team ချင်း session နှင့် encrypted channels ဖြင့်သာ ဆက်သွယ်ပါ</p>',
+        quiz: {q:'IFJ Charter အရ source confidentiality ကို ဘယ်သူ့အပေါ် ဦးစားပေးသင့်သနည်း?', opts:['Advertiser','Government','Source ကိုယ်တိုင်','Editor'], ans:2}
+      },
+      {
+        title: 'BBC Editorial Values',
+        icon: '📺',
+        body: '<p><b>BBC Editorial Guidelines</b> — ကမ္ဘာ့ editorial standard အဖွဲ့အစည်းကြီးတစ်ခု၏ core values —</p><p><b>BBC ၆ core values</b><br>▸ <b>Truth & Accuracy</b> — verify မလုပ်ဘဲ publish မလုပ်<br>▸ <b>Impartiality</b> — ဘက်မလိုက်<br>▸ <b>Editorial Integrity & Independence</b> — ဘယ်အဖွဲ့ကမှ ဖိနှိပ်ခွင့်မပေး<br>▸ <b>Harm & Offence</b> — damage ကို ပြည်သူ့အကျိုးနှင့် ချိန်ဆ<br>▸ <b>Fairness</b> — ကျဆုံးသူတွေ ဒုက္ခသည်တွေ ကိုယ်ဆိုင်ကာကွယ်ခွင့်<br>▸ <b>Privacy</b> — public figure မဟုတ်ဘဲ ကိုယ်ပိုင်ဝင်ရောက်မှု မပြုပါနဲ့</p><p><b>Due Impartiality</b> — ဘက်မလိုက်ခြင်းဆိုသည်မှာ ဘာကိုမှ မပြောခြင်းမဟုတ် — fact-based reporting ဖြင့် evidence ပြသ၍ ဘယ် party ၏ propaganda ကိုမှ မဖြန့်ဝေ</p><p><b>Significant Errors</b> — ထင်သာမြင်သာသော error ဖြစ်ရင် ချက်ချင်း on-air/online correction ထုတ်ပြန်ပါ</p>',
+        quiz: {q:'BBC Editorial Values တွင် "Due Impartiality" ဆိုသည်မှာ ဘာကိုဆိုလိုသနည်း?', opts:['ဘာမှမပြောသည်','Evidence ဖြင့် fact-based reporting','စစ်ကောင်စီကိုလည်း ပါဝင်စေ','Reader vote ဖြင့် ဆုံးဖြတ်'], ans:1}
+      },
+      {
+        title: 'Gender-Sensitive Reporting',
+        icon: '♀️',
+        body: '<p><b>WAN-IFRA Women in News</b> နှင့် <b>IFJ Gender Policy</b> —</p><p><b>Gender-sensitive reporting ဆိုသည်မှာ</b><br>▸ အမျိုးသမီးများကို passive victim သာ မဖော်ပြ — agency ပါရှိသောသူများဖြစ်ကြောင်း ဖော်ပြ<br>▸ GBV (Gender-Based Violence) reporting ၌ survivor ၏ မျက်နှာ၊ အမည် ဖုံးကွယ်ပါ<br>▸ Forced marriage၊ trafficking survivor stories — trauma-informed approach<br>▸ Female source များ expert အဖြစ် ကိုးကားပါ</p><p><b>Myanmar Conflict Context</b><br>▸ Forced conscription နှင့် GBV ကို link ဆောင်ပြ<br>▸ Displaced women ၏ economic impact ဖော်ပြ<br>▸ Female PDF members ၏ story — stereotype မဖြင့်</p><p><b>TNV commitment</b> — Leadership ၅၀% အမျိုးသမီး — gender lens ကို editorial ၌ ထည့်ဆက်ပြောကြမည်</p>',
+        quiz: {q:'GBV survivor story report လုပ်ရာတွင် ဘာကို ဦးစားပေးသင့်သနည်း?', opts:['ဓာတ်ပုံအများဆုံးထည့်','Survivor identity ကာကွယ်','Social media share','Live interview'], ans:1}
+      }
+    ]
+  },
+  {
+    name: '📋 မီဒီယာဥပဒေ & စည်းမျဉ်းများ',
+    src: 'RSF, CPJ, ARTICLE 19, UNESCO Press Freedom',
+    lessons: [
+      {
+        title: 'ပြည်သူ့သတင်းရပိုင်ခွင့်',
+        icon: '⚡',
+        body: '<p><b>Universal Declaration of Human Rights Article 19</b> —<br>"ကိုယ်ပိုင်ထင်မြင်ချက်ကို ကျင့်သုံးပိုင်ခွင့်နှင့် ထင်မြင်ချက်ဖော်ထုတ်ပိုင်ခွင့်ရှိသည်"</p><p><b>Press Freedom</b> ကို ကာကွယ်သောအဖွဲ့များ<br>▸ <b>RSF</b> (Reporters Without Borders) — Press Freedom Index<br>▸ <b>CPJ</b> (Committee to Protect Journalists)<br>▸ <b>ARTICLE 19</b> — Freedom of Expression<br>▸ <b>IFJ</b> — journalist safety</p><p><b>Myanmar Press Freedom အခြေအနေ</b><br>RSF World Press Freedom Index 2024 တွင် မြန်မာ ၁၇၁ မြောက် (ကမ္ဘာ့ ၁၈၀ နိုင်ငံ) — အလွန်ဆိုးရွားသောဘေးကင်းမမှုနှင့် censorship<br>▸ ၂၀၂၁ ကနေ ယခုအထိ — သတင်းသမားပေါင်း ၁၀၀ ကျော် ဖမ်းဆီးခံထားရ<br>▸ စစ်ကောင်စီက "terrorism" law ကို သတင်းသမားများကို ကျင့်သုံး</p>',
+        quiz: {q:'UDHR Article 19 သည် ဘာကို ကာကွယ်သနည်း?', opts:['Military rights','Freedom of expression & information','Trade rights','Travel rights'], ans:1}
+      },
+      {
+        title: 'Myanmar မီဒီယာဥပဒေ အနိုင်းအဖြတ်',
+        icon: '⚖️',
+        body: '<p><b>စစ်ကောင်စီ ကျင့်သုံးနေသော ဥပဒေများ</b></p><p><b>Penal Code Section 505(a)</b> — "စစ်တပ်ကို ဆန့်ကျင်ဖြင့် ကြောက်ရွံ့မှုဖြစ်စေသော" information ဖြန့်ဝေလျှင် ၃ နှစ်မှ ၇ နှစ်ထိ</p><p><b>Electronic Transactions Law 66(d)</b> — Online defamation — ၃ နှစ်ထိ</p><p><b>Counter Terrorism Law</b> — သတင်းသမားများကို "terrorist" ဟုသတ်မှတ်ကာ အသုံးပြုနေ</p><p><b>TNV reporters ၏ ဥပဒေဆိုင်ရာ ကာကွယ်မှုများ</b><br>▸ RSF Emergency Fund<br>▸ CPJ Digital Safety assistance<br>▸ NUG Ministry of Information recognition<br>▸ ထိုင်းဥပဒေ — exile journalists ကာကွယ်ချက်ရှိ</p><p><b>ဆုံးဖြတ်ချက်</b> — in-country reporters တစ်ကြိမ်ဖမ်းဆီးခံရလျှင် ချက်ချင်း Editor ကို secure channel (Session) မှ အကြောင်းကြားပါ</p>',
+        quiz: {q:'စစ်ကောင်စီ၏ Section 505(a) သည် ဘာနှင့် ဆက်နွှယ်သနည်း?', opts:['Tax law','စစ်တပ်ဆန့်ကျင်ရေး content','Copyright','Trademark'], ans:1}
+      },
+      {
+        title: 'Exile Media ဥပဒေဆိုင်ရာ',
+        icon: '🏳️',
+        body: '<p><b>ထိုင်းနိုင်ငံ Exile Media Framework</b></p><p>TNV သည် ထိုင်းနိုင်ငံ ချင်းမိုင်မှ operate လုပ်ပြီး ထိုင်းဥပဒေ၊ International law အောက်ရှိသည်</p><p><b>ကာကွယ်ချက်ရှိသော rights</b><br>▸ Refugee Convention 1951 — journalist ဖြစ်ခြင်းကြောင့် ဖမ်းဆီးခံရနိုင်မှုကနေ ကာကွယ်<br>▸ Thai law — foreign media operate ဖို့ registration လိုသည်<br>▸ UNHCR — emergency protection</p><p><b>TNV operation ကန့်သတ်ချက်များ</b><br>▸ ထိုင်းပြည်တွင်းကိစ္စများ coverage မလုပ်ပါနဲ့<br>▸ Myanmar ဆိုင်ရာ coverage သာ<br>▸ Thai authorities နှင့် ပဋိပက္ခမဖြစ်ပွားရ</p><p><b>Arrest Warrant ကိုင်ဆောင်သောသူများ</b><br>Editor-in-Chief Nay Aung ကဲ့သို့ active warrant ရှိသူများ — Myanmar territory နှင့် extradition agreement ရှိသော နိုင်ငံများ မသွားပါနဲ့ — RSF/CPJ ကို ကြိုတင်ပြောပါ</p>',
+        quiz: {q:'TNV ထိုင်းနိုင်ငံမှ operate လုပ်သောအခါ ဘာ coverage ကန့်သတ်ချက်ရှိသနည်း?', opts:['Myanmar coverage','ထိုင်းပြည်တွင်းကိစ္စများ','International news','Finance news'], ans:1}
+      },
+      {
+        title: 'Journalist Safety Protocol',
+        icon: '🛡️',
+        body: '<p><b>CPJ Digital Safety</b> နှင့် <b>RSF Journalist Safety Guide</b> —</p><p><b>Physical Safety</b><br>▸ Field assignment မမသွားမီ — Editor ကို location၊ contact plan ပြောပါ<br>▸ Check-in time သတ်မှတ်ပါ — ၃ နာရီပြည့်ရင် မကြားရင် emergency protocol<br>▸ Press vest မသုံးပါနဲ့ — မြန်မာပြည်တွင်း target ဖြစ်နိုင်<br>▸ Evacuation plan — Editor နှင့် ကြိုတင်သဘောတူပါ</p><p><b>Digital Safety</b><br>▸ Signal / Session — team communication<br>▸ VPN — ဘာ traffic မဆို<br>▸ Two-factor authentication — အကောင့်တိုင်းတွင်<br>▸ Sensitive data — encrypted storage သာ<br>▸ Device seizure ဖြစ်ရင် — remote wipe plan</p><p><b>Mental Health</b><br>▸ Dart Center — trauma journalism resources<br>▸ Regular debriefs with Editor<br>▸ Peer support — TNV newsroom within</p>',
+        quiz: {q:'Field assignment မသွားမီ ဘာကို Editor ကို ပြောသင့်သနည်း?', opts:['Salary request','Location နှင့် check-in time','Story angle','Camera model'], ans:1}
+      }
+    ]
+  },
+  {
+    name: '🔐 ဒစ်ဂျစ်တယ်လုံခြုံရေး',
+    src: 'CPJ Digital Safety, Access Now, Tactical Tech',
+    lessons: [
+      {
+        title: 'VPN နှင့် Encryption အခြေခံ',
+        icon: '🛡️',
+        body: '<p><b>Access Now Digital Security Helpline</b> နှင့် <b>CPJ Digital Safety Kit</b> —</p><p>မြန်မာပြည်တွင်းတွင် ISP (Telecom, MPT, Ooredoo) နှင့် စစ်တပ်က network traffic ကို monitor လုပ်နိုင်သည်</p><p><b>VPN ၏ အလုပ်လုပ်ပုံ</b><br>ISP → VPN Server (encrypted) → Website<br>ISP သည် VPN ဆိုဆိပ်ကမ်းသို့သွားကြောင်းသာ မြင်နိုင်ပြီး content မမြင်ဘူး</p><p><b>Recommended VPN (Free)</b><br>▸ <b>Psiphon</b> — Myanmar ISP blocks ကိုကျော်နိုင်<br>▸ <b>Lantern</b> — peer-to-peer bypass<br>▸ <b>Tor Browser</b> — အဆင့်မြင့်ဆုံး anonymity</p><p><b>VPN ကို မယုံကြည်ရ့မည့် situation</b><br>▸ ဖုန်းသော်လည်း စစ်တပ်က physically ဖမ်းမိနိုင်<br>▸ VPN log ကို provider မှ ပေးနိုင်<br>▸ No-log VPN ကိုသာ သုံးပါ</p>',
+        quiz: {q:'VPN သုံးသောအခါ ISP မြင်နိုင်သည်မှာ ဘာလဲ?', opts:['Website content','VPN server destination','ဘာမှမမြင်ဘူး','Email content'], ans:1}
+      },
+      {
+        title: 'Secure Messaging Apps',
+        icon: '💬',
+        body: '<p><b>Electronic Frontier Foundation (EFF) Surveillance Self-Defense</b> —</p><p><b>End-to-End Encryption (E2EE) ဆိုသည်မှာ</b> — သင်နှင့် recipient ၂ ဦးသာ message ကိုဖတ်နိုင်ပြီး server ကမြင်မနိုင်ခြင်း</p><p><b>App Comparison</b><br>▸ <b>SMS</b> — ❌ encrypt မဟုတ်၊ စစ်တပ်မြင်နိုင်<br>▸ <b>Facebook Messenger</b> — ❌ default E2EE မဟုတ်<br>▸ <b>Telegram</b> — ⚠️ Secret Chat ၌သာ E2EE (Group chat မဟုတ်)<br>▸ <b>Signal</b> — ✅ E2EE၊ phone number လိုသည်<br>▸ <b>Session</b> — ✅ E2EE၊ phone number မလို</p><p><b>TNV Protocol</b><br>▸ Thailand team — Signal<br>▸ In-country reporters — Session (phone number မပါ)</p><p><b>Disappearing Messages</b> — sensitive conversation ၌ auto-delete on ပြုလုပ်ပါ</p>',
+        quiz: {q:'In-country reporters အတွက် TNV ဘယ် app recommend လုပ်သနည်း?', opts:['Telegram','WhatsApp','Session','WeChat'], ans:2}
+      },
+      {
+        title: 'Device & Account Security',
+        icon: '🔒',
+        body: '<p><b>Tactical Technology Collective</b> နှင့် <b>Access Now</b> guide —</p><p><b>Two-Factor Authentication (2FA)</b><br>▸ Email၊ Gmail၊ Google account — 2FA ဖွင့်ပါ<br>▸ SMS 2FA ကိုမသုံး (SIM intercept ဖြစ်နိုင်) — Authenticator app (Google Authenticator) သုံးပါ</p><p><b>Password</b><br>▸ အနည်းဆုံး ၁၂ character<br>▸ Account တိုင်းတွင် ကွဲပြားသော password<br>▸ Password Manager သုံးပါ (Bitwarden — free)</p><p><b>Device Seizure ဖြစ်ရင်</b><br>▸ Remote wipe setup ကြိုလုပ်ထားပါ (Find My iPhone, Google Find My Device)<br>▸ Source ဆိုင်ရာ data ကို device ထဲ မသိမ်းဆည်ပါနဲ့<br>▸ Encrypted folder (VeraCrypt) ၌သာ သိမ်းပါ</p>',
+        quiz: {q:'2FA ၌ SMS ထက် ဘာပိုလုံခြုံသနည်း?', opts:['Email','Authenticator App','Phone call','SMS code'], ans:1}
+      },
+      {
+        title: 'EXIF Data & Photo Safety',
+        icon: '📷',
+        body: '<p><b>EXIF (Exchangeable Image File Format)</b> — ဓာတ်ပုံတိုင်းတွင် ကွယ်ဝှက်၍ သိမ်းဆည်ထားသော metadata</p><p><b>EXIF တွင် ပါနိုင်သောအချက်များ</b><br>▸ GPS coordinates (တိကျသော location)<br>▸ Date & Time<br>▸ Camera model & serial number<br>▸ Device owner name (iOS)</p><p><b>EXIF ဖျက်နည်း</b><br>▸ <b>iOS</b> — Photos app → Share → "Remove Location" သို့မဟုတ် Settings → Privacy → Location → Camera → Never<br>▸ <b>Android</b> — Camera settings → Location tags OFF<br>▸ <b>Desktop</b> — ExifTool (free, command line)<br>▸ <b>Online</b> — exifpurge.com</p><p><b>Photo submission rule (TNV)</b><br>ဓာတ်ပုံ submit မလုပ်မီ EXIF အမြဲဖျက်ပါ — in-country source ကာကွယ်ချက်</p>',
+        quiz: {q:'EXIF data ကို iOS တွင် ဘယ်လိုပိတ်နိုင်သနည်း?', opts:['Camera OFF','Settings → Privacy → Location → Camera → Never','Delete photo','Screenshot ရိုက်'], ans:1}
+      }
+    ]
+  },
+  {
+    name: '🌐 IMS LEARN မော်ဂျူးများ',
+    src: 'International Media Support (IMS)',
+    lessons: [
+      {
+        title: 'IMS LEARN ဆိုသည်မှာ',
+        icon: '🎓',
+        body: '<p><b>International Media Support (IMS)</b> သည် conflict နှင့် transition ဖြတ်သန်းနေသော နိုင်ငံများ၌ independent media ကို ထောက်ကူသော Danish NGO ဖြစ်သည်။ IMS သည် Myanmar Journalism Institute (MJI) ကို တည်ထောင်ရာတွင် IMS ပါဝင်ခဲ့သည်။</p><p><b>IMS LEARN platform</b> — မြန်မာဘာသာဖြင့် သင်ခန်းစာများ ပါဝင်ပြီး free ဖြစ်သည်</p><p><b>ရရှိနိုင်သော modules (မြန်မာဘာသာ)</b><br>▸ News Production — သတင်းထုတ်လုပ်မှု အခြေခံ<br>▸ Basic Journalistic Thinking — အခြေခံ သတင်းပညာ<br>▸ Fact Checking and Verification Tools<br>▸ Media Law and Ethics<br>▸ Risk Assessment<br>▸ Physical Safety<br>▸ Digital Security<br>▸ Psychosocial Support<br>▸ Social Media Dissemination<br>▸ Gender Representation in the Media<br>▸ Conflict Sensitive Journalism<br>▸ Mobile Journalism<br>▸ Interview Techniques<br>▸ Journalistic Storytelling<br>▸ Constructive Journalism<br>▸ AI in Journalism</p>',
+        quiz: {q:'IMS LEARN သည် ဘယ် organization မှ develop လုပ်သနည်း?', opts:['BBC','International Media Support (IMS)','UNESCO','Reuters'], ans:1}
+      },
+      {
+        title: 'News Production — IMS LEARN',
+        icon: '📰',
+        body: '<p><b>IMS LEARN: News Production Module</b> မှ အဓိကသင်ခန်းစာများ —</p><p><b>Newsworthiness (သတင်းဖြစ်မဖြစ် ဆုံးဖြတ်နည်း)</b><br>▸ <b>Timeliness</b> — ယခုမှဖြစ်ပျက်နေသောကိစ္စ<br>▸ <b>Proximity</b> — ဖတ်သူနှင့် နီးကပ်မှု (မကွေး ဖြစ်ရင် မကွေးဒေသခံများ ပိုအကျိုးရှိ)<br>▸ <b>Impact</b> — ဘယ်နှစ်ဦးကို အကျိုးသက်ရောက်သလဲ<br>▸ <b>Prominence</b> — ပါဝင်သောပုဂ္ဂိုလ်များ<br>▸ <b>Conflict</b> — ပဋိပက္ခ၊ တင်းမာမှု<br>▸ <b>Human Interest</b> — လူ့ဘဝဆိုင်ရာ emotional element</p><p><b>Story Angle</b> — တူညီသောဖြစ်ရပ်ကို reporter နှစ်ဦး ကွဲပြားသောထောင့်မှ ကြည့်နိုင်သည်<br>ဥပမာ — "စစ်ကောင်စီ ကျောင်းမီးရှို့" — Angle A: ကလေးပညာရေးသက်ရောက်မှု / Angle B: စစ်ကောင်စီ policy ဆက်ဆံမှု</p><p><b>Newsroom Workflow</b><br>Reporter → Editor → Fact-check → Legal/Safety review → Publish</p>',
+        quiz: {q:'Newsworthiness ၌ "Impact" ဆိုသည်မှာ ဘာကိုဆိုလိုသနည်း?', opts:['Reporter popularity','ဘယ်နှစ်ဦးကို သက်ရောက်သလဲ','Photo quality','Story length'], ans:1}
+      },
+      {
+        title: 'Psychosocial Support — Trauma Journalism',
+        icon: '🧠',
+        body: '<p><b>IMS LEARN: Psychosocial Support Module</b> မှ —</p><p>Conflict zone reporter တွေသည် Secondary Traumatic Stress (STS) ဒဏ်ကြုံနိုင်သည် — Post-Traumatic Stress Disorder (PTSD) ကဲ့သို့ပင်ဖြစ်သည်</p><p><b>Trauma symptoms to recognize</b><br>▸ Flashback — ဖြစ်ပျက်မှု ထပ်မံမြင်ယောင်ခြင်း<br>▸ Avoidance — assignment ကို ရှောင်ခြင်း<br>▸ Hypervigilance — အမြဲတမ်း ကြောက်ရွံ့မှု<br>▸ Sleep disturbance — အိပ်မပျော်ခြင်း</p><p><b>Self-care strategies (IMS recommend)</b><br>▸ Regular debriefing with Editor aftter difficult assignments<br>▸ Peer support — colleague တွေနဲ့ ပြောဆို<br>▸ Physical activity — regular exercise<br>▸ Limit trauma content exposure outside work<br>▸ Professional counseling access</p><p><b>Editor ၏ တာဝန်</b> — reporter မျှဝေလာသော trauma signs ကို recognise ပြီး support ပေးရမည်</p>',
+        quiz: {q:'Secondary Traumatic Stress ကို reporter တွင် ဘာကြောင့် ဖြစ်နိုင်သနည်း?', opts:['Salary issue','Trauma events exposure ကြောင့်','Equipment failure','Editor conflict'], ans:1}
+      },
+      {
+        title: 'Constructive Journalism',
+        icon: '🌱',
+        body: '<p><b>IMS LEARN: Constructive Journalism Module</b> မှ —</p><p><b>Constructive Journalism ဆိုသည်မှာ</b> — ပြဿနာသာ report မလုပ်ဘဲ solution နှင့် progress ကိုပါ ဖော်ပြသော journalism</p><p><b>Traditional vs Constructive</b><br>✗ "Magway ၌ ဆေးဝါးမရှိ" (ပြဿနာသာ)<br>✓ "Magway ဆေးဝါးနှစ်ပတ်လျင်တစ်ကြိမ် community network ဖြင့်ဖြန့်ဝေ — ပြည်သူ ၅,၀၀၀ ရောက်" (solution ပါ)</p><p><b>4 elements of Constructive Journalism</b><br>▸ Problem ဖော်ပြ<br>▸ Context ပေး (ဘာကြောင့် ဒီလိုဖြစ်ရသလဲ)<br>▸ Progress ဖော်ပြ (ဘာတွေ ဖြေရှင်းပြီးပြီ)<br>▸ Solution/Agency (ဘာတွေ ဆက်လုပ်နိုင်သလဲ)</p><p><b>TNV context</b> — Magway/Sagaing ၌ resistance community ၏ resilience ကို constructive lens ဖြင့် ဖော်ပြ</p>',
+        quiz: {q:'Constructive Journalism တွင် traditional journalism ထက် ဘာပိုပါသနည်း?', opts:['ပိုရှည်သောအစီရင်ခံ','Solution နှင့် progress ဖော်ပြ','Photo ပိုထည့်','Expert ပိုကိုးကား'], ans:1}
+      },
+      {
+        title: 'Mobile Journalism (MoJo)',
+        icon: '📱',
+        body: '<p><b>IMS LEARN: Mobile Journalism Module</b> မှ —</p><p><b>Smartphone တစ်ဖုန်းနဲ့ professional news ထုတ်လုပ်နိုင်</b> — Myanmar conflict zone ၌ camera team မပါဘဲ report လုပ်ရသောအခါ MoJo သည် essential ဖြစ်သည်</p><p><b>Essential MoJo gear</b><br>▸ Tripod/Gorilla pod — steady shots<br>▸ External microphone (lavalier) — audio quality<br>▸ Power bank — field ၌ ဓာတ်ကုန်မည်ကို ကာကွယ်<br>▸ Spare storage — cloud backup</p><p><b>Editing apps (Free)</b><br>▸ <b>CapCut</b> — video edit, blur faces<br>▸ <b>InShot</b> — quick video edit<br>▸ <b>Snapseed</b> — photo edit<br>▸ <b>Voice Record Pro</b> — audio interview</p><p><b>Security</b><br>▸ Footage ကို secure folder ၌ သိမ်းပါ<br>▸ Cloud backup ပြုလုပ်ပြီးချင်း original delete ပြုလုပ်ပါ<br>▸ Device confiscate ဖြစ်ရင် remote wipe plan ရှိပါ</p>',
+        quiz: {q:'Myanmar field reporting ၌ MoJo အတွက် ဘာ app သုံး face blur လုပ်နိုင်သနည်း?', opts:['Instagram','CapCut','Snapchat','TikTok'], ans:1}
+      }
+    ]
+  },
+  {
+    name: '📷 Field & Visual Reporting',
+    src: 'Reuters Video Standards, AP Photojournalism, Dart Center',
+    lessons: [
+      {
+        title: 'Field Photography Standards',
+        icon: '📸',
+        body: '<p><b>AP Photojournalism Ethics</b> နှင့် <b>Reuters Photography Standards</b> —</p><p><b>AP Standard — ဓာတ်ပုံ ၌ မပြောင်းလဲရသောအချက်</b><br>▸ Subject ကို ပေါင်းထည့်ခြင်း သို့မဟုတ် ဖယ်ရှားခြင်း မပြုပါနဲ့<br>▸ Color manipulation ၌ editorial intent ပြောင်းမနိုင်<br>▸ Caption မမှားပါနဲ့ — ဘယ်သူ၊ ဘာ၊ ဘယ်နေရာ</p><p><b>Context ပြသောဓာတ်ပုံ</b><br>▸ Wide shot → Medium shot → Close-up — story ဖြင့် ဆက်ဆိုင်<br>▸ Human element — ဘ၀ကိုပြ၊ statistic မဟုတ်<br>▸ Dignity — ဒုက္ခသည်များ၊ ဒဏ်ရာသည်များ ကို dehumanize မဖြစ်ရ</p><p><b>Safety during shooting</b><br>▸ Active combat zone — bulletproof vest သာ၊ press vest မဟုတ်<br>▸ မိမိ position ကို Editor ကို အမြဲ update<br>▸ Crowd ၌ — exit route ကြိုသိထားပါ</p>',
+        quiz: {q:'AP Photo Standards အရ ဓာတ်ပုံ ၌ ဘာမလုပ်ရဘဲ?', opts:['Color adjust','Subject ထည့်ဖယ်ရှားခြင်း','Crop','Brighten'], ans:1}
+      },
+      {
+        title: 'Video Reporting',
+        icon: '🎥',
+        body: '<p><b>Reuters Video Standards</b> နှင့် <b>Thomson Foundation Mobile Journalism</b> —</p><p><b>Shot types</b><br>▸ <b>Establishing shot</b> — location context ပြ<br>▸ <b>Medium shot</b> — action ပြ<br>▸ <b>Close-up</b> — emotion ပြ<br>▸ <b>Cutaway</b> — edit transition</p><p><b>Audio ကောင်းဖို့</b><br>▸ Wind noise — windshield သို့မဟုတ် body ဖြင့် ဖုံးကာရိုက်<br>▸ Background noise — interview ရိုက်ဖို့ quiet corner ရှာ<br>▸ Phone mic — mouth မှ ၁၅-၂၀ cm ကွာ</p><p><b>Myanmar field video rule</b><br>▸ ၃-၅ မိနစ်မကျော်<br>▸ Caption — Where + When + What<br>▸ Faces blur — CapCut / InShot<br>▸ Signboard blur — location ဖော်ပြနိုင်သောစာတန်းများ</p>',
+        quiz: {q:'Myanmar field video ၌ ဘာ caption minimum ပါသင့်သနည်း?', opts:['Reporter name','Where + When + What','Camera model','Video length'], ans:1}
+      }
+    ]
+  }
+];
+
+
+function initTraining() {
+  var tabs = document.getElementById('modTabs');
+  tabs.innerHTML = MODS.map(function(m, i) {
+    return '<button class="mtab ' + (i===curMod?'on':'') + '" onclick="switchMod(' + i + ')">' + esc(m.name) + '</button>';
+  }).join('');
+  renderLesson();
+}
+
+function switchMod(i) {
+  curMod = i;
+  curLesson = 0;
+  quizDone = false;
+  document.querySelectorAll('.mtab').forEach(function(b, j){ b.classList.toggle('on', j===i); });
+  renderLesson();
+}
+
+function renderLesson() {
+  var mod = MODS[curMod];
+  var lesson = mod.lessons[curLesson];
+  var total = mod.lessons.length;
+  quizDone = false;
+
+  var prog = mod.lessons.map(function(_, i) {
+    return '<div class="prog-seg ' + (i<=curLesson?'done':'') + '"></div>';
+  }).join('');
+
+  var opts = lesson.quiz.opts.map(function(o, i) {
+    return '<button class="qopt" id="qo' + i + '" onclick="checkQuiz(' + i + ')">' + esc(o) + '</button>';
+  }).join('');
+
+  var nav = '<div class="lesson-nav">';
+  if (curLesson > 0) nav += '<button class="btns" onclick="prevLesson()" style="flex:1">← အရင်</button>';
+  else nav += '<div style="flex:1"></div>';
+  if (curLesson < total-1) nav += '<button class="btn" onclick="nextLesson()" style="flex:2">ဆက်လက် →</button>';
+  else nav += '<button class="btn" onclick="doneLesson()" style="flex:2;background:var(--green)">✓ ပြီးပါပြီ</button>';
+  nav += '</div>';
+
+  document.getElementById('trainingArea').innerHTML =
+    '<div class="prog-bar">' + prog + '</div>' +
+    '<div class="lesson-card">' +
+      '<div class="lesson-icon">' + lesson.icon + '</div>' +
+      '<div class="lesson-title">' + esc(lesson.title) + '</div>' +
+      '<div class="lesson-body">' + lesson.body + '</div>' +
+      (mod.src ? '<div style="font-size:10px;color:var(--text3);margin-top:10px;padding-top:8px;border-top:1px solid var(--border)">📚 ကိုးကားရင်းမြစ်: ' + esc(mod.src) + '</div>' : '') +
+    '</div>' +
+    '<div class="quiz-box">' +
+      '<div class="quiz-label">QUIZ</div>' +
+      '<div class="quiz-q">' + esc(lesson.quiz.q) + '</div>' +
+      '<div class="quiz-opts">' + opts + '</div>' +
+      '<div id="qfb"></div>' +
+    '</div>' +
+    nav;
+}
+
+function checkQuiz(idx) {
+  if (quizDone) return;
+  quizDone = true;
+  var ans = MODS[curMod].lessons[curLesson].quiz.ans;
+  var opts = MODS[curMod].lessons[curLesson].quiz.opts;
+  for (var i = 0; i < opts.length; i++) {
+    var btn = document.getElementById('qo' + i);
+    if (btn) {
+      btn.style.pointerEvents = 'none';
+      if (i === ans) btn.classList.add('correct');
+      else if (i === idx && idx !== ans) btn.classList.add('wrong');
+    }
+  }
+  var fb = document.getElementById('qfb');
+  if (fb) {
+    fb.innerHTML = idx === ans
+      ? '<div style="color:var(--green);font-weight:700;margin-top:7px;font-size:13px">✓ မှန်ကန်သည်!</div>'
+      : '<div style="color:#991b1b;font-weight:700;margin-top:7px;font-size:13px">✗ မှားသည်။ မှန်ကန်သောဖြေချက်: <b>' + esc(opts[ans]) + '</b></div>';
+  }
+}
+
+function nextLesson() { curLesson++; quizDone = false; renderLesson(); }
+function prevLesson() { curLesson--; quizDone = false; renderLesson(); }
+function doneLesson() {
+  document.getElementById('trainingArea').innerHTML =
+    '<div style="text-align:center;padding:3rem 1rem">' +
+    '<div style="font-size:48px;margin-bottom:12px">🎓</div>' +
+    '<div style="font-family:var(--hd);font-size:22px;letter-spacing:.08em;color:var(--text);margin-bottom:8px">သင်ခန်းစာပြီးပါပြီ</div>' +
+    '<div style="font-size:13px;color:var(--text2);margin-bottom:1.5rem">' + esc(MODS[curMod].name) + '</div>' +
+    '<button class="btn" onclick="curLesson=0;renderLesson()" style="max-width:200px;margin:0 auto">ပြန်ဖတ်မည်</button></div>';
+}
+
+// INIT
+if (localStorage.getItem('vpn_ok')) document.getElementById('vpnBanner').style.display = 'none';
+var svUn = localStorage.getItem('tnv_un');
+if (svUn) { document.getElementById('un').value = svUn; }
+var svChat = localStorage.getItem('tnv_chat_un');
+if (svChat) { document.getElementById('chatUn').value = svChat; }
+renderChips();
+renderChallenge();
+
+setInterval(function() {
+  if (curTab === 'challenge') renderChallenge();
+  if (curTab === 'chat')      renderChat();
+  if (curTab === 'board')     renderLB();
+  if (curTab === 'editor' && isEd) { loadEdSubs(); loadEdReports(); }
+}, 10000);
+
+// Unregister old service workers
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(function(regs) {
+    regs.forEach(function(r) { r.unregister(); });
+  });
+}
+</script>
+</body>
+</html>
