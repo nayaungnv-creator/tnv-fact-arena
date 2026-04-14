@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>TNV Fact Arena</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#f8f6f2">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="TNV Fact Arena">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+Myanmar:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#f8f6f2;--bg2:#ffffff;--bg3:#f0ede8;
+  --border:#e0dbd4;--border2:#d0c8c0;
+  --red:#7A1818;--red2:#9B2020;--red3:#BE3030;
+  --text:#1a1410;--text2:#5a5248;--text3:#9a9088;
+  --green:#166534;--gold:#B8820A;
+  --my:'Noto Sans Myanmar',sans-serif;
+  --hd:'Bebas Neue',cursive;
+}
+body{font-family:var(--my);background:var(--bg);color:var(--text);min-height:100vh}
+
+/* HEADER */
+.hdr{background:var(--bg2);border-bottom:2px solid var(--red);padding:0 16px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.hdr-logo{display:flex;align-items:center;gap:9px}
+.hdr-n{width:32px;height:32px;background:var(--red);display:flex;align-items:center;justify-content:center;font-family:var(--hd);font-size:20px;color:#fff;clip-path:polygon(0 0,100% 0,100% 75%,75% 100%,0 100%)}
+.hdr-title{font-family:var(--hd);font-size:17px;letter-spacing:.06em}
+.hdr-sub{font-size:9px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase}
+.hdr-live{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.hdr-dot{width:7px;height:7px;border-radius:50%;background:#ccc}
+.hdr-dot.on{background:#16a34a;box-shadow:0 0 6px rgba(22,163,74,.4);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* VPN */
+.vpn{background:#fff8f0;border-bottom:1px solid #fcd9b0;padding:7px 16px;display:flex;align-items:center;gap:8px;font-size:11px;color:#92400e}
+.vpn b{color:#c2410c}
+.vpn-x{margin-left:auto;background:none;border:none;font-size:16px;cursor:pointer;color:#9a9088;padding:0 4px;line-height:1}
+
+/* NAV */
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:50;background:rgba(248,246,242,.97);backdrop-filter:blur(10px);border-top:1px solid var(--border);display:flex;padding-bottom:env(safe-area-inset-bottom)}
+.ntab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 2px 6px;background:none;border:none;cursor:pointer;color:var(--text3);font-family:var(--my);font-size:9px;gap:3px;position:relative;transition:color .15s}
+.ntab.on{color:var(--red3)}
+.ntab.on::before{content:'';position:absolute;top:0;left:25%;right:25%;height:2px;background:var(--red);border-radius:0 0 2px 2px}
+.ntab-ic{font-size:16px;line-height:1}
+
+/* VIEWS */
+.view{display:none;padding:14px 16px 90px}
+.view.on{display:block}
+.mx{max-width:680px;margin:0 auto}
+
+/* TOGGLE */
+.tog{display:flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:1.125rem}
+.togb{flex:1;padding:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:none;color:var(--text3);font-family:var(--my)}
+.togb.on{background:var(--red);color:#fff}
+
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--red);border-radius:0 10px 10px 0;padding:1rem;margin-bottom:.875rem}
+.card.dim{opacity:.5;border-left-color:var(--border2)}
+.ctop{display:flex;align-items:center;gap:7px;margin-bottom:9px}
+.ctag{font-family:var(--hd);font-size:10px;letter-spacing:.08em;color:var(--red3);background:rgba(122,24,24,.08);padding:2px 9px;border-radius:3px;border:1px solid rgba(122,24,24,.18)}
+.ctag.grey{color:var(--text3);background:var(--bg3);border-color:var(--border)}
+.clive{display:flex;align-items:center;gap:4px;font-size:9px;font-weight:700;color:#16a34a;letter-spacing:.08em;text-transform:uppercase}
+.clive::before{content:'';width:5px;height:5px;border-radius:50%;background:#16a34a;animation:blink 1.5s infinite}
+.ctitle{font-size:15px;font-weight:700;color:var(--text);margin:0 0 7px;line-height:1.5}
+.cbody{font-size:13px;color:var(--text2);line-height:1.7;margin:0 0 9px;white-space:pre-wrap}
+.cmeta{font-size:11px;color:var(--text3);display:flex;gap:10px;flex-wrap:wrap}
+
+.scard{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.875rem;margin-bottom:.625rem}
+.shead{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.sname{font-size:13px;font-weight:700;color:var(--text)}
+.stime{font-size:10px;color:var(--text3)}
+.sbody{font-size:13px;color:var(--text2);line-height:1.55}
+.spts{font-size:13px;font-weight:700;color:var(--gold)}
+.vmark{font-size:10px;color:var(--green);font-weight:700}
+
+/* FORMS */
+.fg{margin-bottom:.875rem}
+.fl{display:block;font-size:10px;font-weight:700;color:var(--text3);margin-bottom:5px;letter-spacing:.07em;text-transform:uppercase}
+.fi,.fta,.fse{width:100%;padding:10px 13px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:var(--my);transition:border .15s}
+.fi:focus,.fta:focus,.fse:focus{outline:none;border-color:var(--red)}
+.fta{min-height:90px;resize:vertical}
+.fse{-webkit-appearance:none;cursor:pointer}
+
+/* CHIPS */
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.chip{padding:4px 11px;font-size:11px;font-weight:600;background:var(--bg3);border:1px solid var(--border2);border-radius:20px;color:var(--text2);cursor:pointer;transition:all .15s}
+.chip:hover{border-color:var(--red);color:var(--red3)}
+
+/* WARNINGS */
+.warn{background:#fff5f5;border:1px solid #fecaca;border-left:3px solid var(--red);border-radius:0 8px 8px 0;padding:9px 13px;margin-bottom:.875rem;font-size:12px;color:#991b1b;line-height:1.6}
+.warn b{display:block;font-size:13px;margin-bottom:2px;color:#7f1d1d}
+.warnx{background:#fffbeb;border:1px solid #fcd34d;border-left:3px solid #d97706;border-radius:0 7px 7px 0;padding:7px 12px;margin-bottom:.875rem;font-size:11px;color:#92400e;line-height:1.6}
+
+/* BUTTONS */
+.btn{display:block;width:100%;padding:12px;background:var(--red);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--my);transition:all .15s}
+.btn:hover{background:var(--red2)}.btn:active{transform:scale(.98)}.btn:disabled{opacity:.4;cursor:not-allowed}
+.btns{padding:8px 14px;font-size:12px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:7px;cursor:pointer;font-family:var(--my)}
+.btna{padding:5px 11px;font-size:11px;font-weight:700;background:rgba(184,130,10,.1);color:var(--gold);border:1px solid rgba(184,130,10,.2);border-radius:5px;cursor:pointer}
+.btnd{padding:7px 12px;font-size:12px;background:rgba(239,68,68,.06);color:#dc2626;border:1px solid rgba(239,68,68,.18);border-radius:6px;cursor:pointer;font-family:var(--my)}
+.row2{display:flex;gap:8px}.row2 .btn{flex:1}
+
+/* ALERTS */
+.al{padding:9px 13px;border-radius:8px;font-size:13px;margin-bottom:.875rem}
+.als{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0}
+.ale{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
+.alw{background:#fffbeb;color:#92400e;border:1px solid #fcd34d}
+
+/* CHAT */
+.chat-w{display:flex;flex-direction:column;height:calc(100dvh - 160px);max-height:600px}
+.chat-m{flex:1;overflow-y:auto;padding-bottom:.5rem}
+.chat-m::-webkit-scrollbar{width:3px}.chat-m::-webkit-scrollbar-thumb{background:var(--border2)}
+.msg{display:flex;gap:8px;margin-bottom:.75rem}
+.msg-av{width:28px;height:28px;border-radius:7px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--text3);flex-shrink:0;margin-top:2px}
+.msg-av.ed{background:rgba(122,24,24,.12);border-color:rgba(122,24,24,.25);color:var(--red3)}
+.msg-bd{flex:1;min-width:0}
+.msg-mt{display:flex;align-items:center;gap:5px;margin-bottom:2px}
+.msg-un{font-size:12px;font-weight:700;color:var(--text)}
+.msg-un.ed{color:var(--red3)}
+.msg-badge{font-size:8px;font-weight:700;background:rgba(122,24,24,.1);color:var(--red3);padding:1px 5px;border-radius:3px;border:1px solid rgba(122,24,24,.18);text-transform:uppercase;letter-spacing:.05em}
+.msg-t{font-size:10px;color:var(--text3);margin-left:auto}
+.msg-tx{font-size:13px;color:var(--text2);line-height:1.5}
+.msg-tx.ed{color:var(--text)}
+.chat-bot{padding-top:.75rem;border-top:1px solid var(--border)}
+.chat-unr{display:flex;align-items:center;gap:7px;margin-bottom:7px}
+.chat-unlb{font-size:11px;color:var(--text3);flex-shrink:0}
+.chat-row{display:flex;gap:7px}
+.chat-fi{flex:1;padding:9px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:var(--my)}
+.chat-fi:focus{outline:none;border-color:var(--red)}
+.chat-send{padding:9px 16px;background:var(--red);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--my)}
+.chat-send:hover{background:var(--red2)}
+
+/* LEADERBOARD */
+.lb-hero{background:linear-gradient(135deg,rgba(122,24,24,.08),rgba(155,32,32,.04));border:1px solid rgba(122,24,24,.18);border-radius:10px;padding:1.125rem;margin-bottom:1.125rem;text-align:center}
+.lb-htitle{font-family:var(--hd);font-size:26px;letter-spacing:.1em;color:var(--text)}
+.lb-hsub{font-size:10px;color:var(--text3);letter-spacing:.06em;margin-top:2px;text-transform:uppercase}
+.lb-row{display:flex;align-items:center;gap:10px;padding:10px 12px;margin-bottom:5px;background:var(--bg2);border:1px solid var(--border);border-radius:8px}
+.lb-row.top{border-color:rgba(184,130,10,.22);background:rgba(184,130,10,.04)}
+.lb-rk{width:26px;text-align:center;font-family:var(--hd);font-size:17px;color:var(--text3);flex-shrink:0}
+.lb-rk.g{color:var(--gold)}.lb-rk.sv{color:#9ca3af;font-size:15px}.lb-rk.br{color:#c07828;font-size:14px}
+.lb-inf{flex:1;min-width:0}
+.lb-nm{font-size:13px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb-tr{font-size:10px;color:var(--text3);margin-top:1px}
+.lb-pts{font-family:var(--hd);font-size:19px;color:var(--gold);flex-shrink:0}
+
+/* EDITOR */
+.ed-sec{margin-bottom:1.375rem}
+.ed-ttl{font-family:var(--hd);font-size:11px;letter-spacing:.12em;color:var(--text3);text-transform:uppercase;margin-bottom:.75rem;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.pts-in{width:56px;padding:5px 7px;background:var(--bg2);border:1px solid var(--border2);border-radius:5px;color:var(--text);font-size:12px;text-align:center}
+.pts-in:focus{outline:none;border-color:var(--gold)}
+.award-r{display:flex;align-items:center;gap:6px;margin-top:7px}
+
+/* TRAINING */
+.mod-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:1.125rem;scrollbar-width:none}
+.mod-tabs::-webkit-scrollbar{display:none}
+.mtab{padding:6px 13px;font-size:11px;font-weight:600;background:var(--bg3);border:1px solid var(--border2);border-radius:20px;color:var(--text2);cursor:pointer;white-space:nowrap;flex-shrink:0;font-family:var(--my);transition:all .15s}
+.mtab.on{background:var(--red);color:#fff;border-color:var(--red)}
+.lesson-card{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--red);border-radius:0 10px 10px 0;padding:1.125rem;margin-bottom:1rem}
+.lesson-icon{font-size:22px;margin-bottom:8px}
+.lesson-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:11px;line-height:1.5}
+.lesson-body{font-size:13px;color:var(--text2);line-height:1.8}
+.lesson-body p{margin-bottom:8px}
+.quiz-box{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:1rem}
+.quiz-label{font-family:var(--hd);font-size:10px;letter-spacing:.1em;color:var(--red3);text-transform:uppercase;margin-bottom:7px}
+.quiz-q{font-size:14px;font-weight:600;color:var(--text);margin-bottom:9px}
+.quiz-opts{display:flex;flex-direction:column;gap:5px}
+.qopt{padding:9px 13px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;text-align:left;cursor:pointer;font-family:var(--my);font-size:13px;color:var(--text);transition:all .15s}
+.qopt:hover{border-color:var(--border2)}
+.qopt.correct{background:#f0fdf4;border-color:#86efac;color:#166534}
+.qopt.wrong{background:#fef2f2;border-color:#fca5a5;color:#991b1b}
+.qfeedback{margin-top:7px;font-size:13px}
+.prog-bar{display:flex;gap:3px;margin-bottom:1rem}
+.prog-seg{height:3px;flex:1;border-radius:2px;background:var(--border2);transition:background .3s}
+.prog-seg.done{background:var(--red)}
+.lesson-nav{display:flex;gap:8px}
+
+/* EMPTY */
+.empty{text-align:center;padding:2.5rem 1rem;color:var(--text3)}
+.empty-ic{font-size:34px;margin-bottom:10px}
+.empty b{display:block;font-size:14px;color:var(--text2);margin-bottom:5px}
+.empty p{font-size:12px;line-height:1.6}
+
+/* SYNC */
+.sync{position:fixed;top:60px;right:12px;z-index:99;font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:4px;background:rgba(22,101,52,.08);color:var(--green);border:1px solid rgba(22,101,52,.18);opacity:0;transition:opacity .3s;pointer-events:none;font-family:'Bebas Neue',cursive}
+.sync.on{opacity:1}
+.hint{font-size:10px;color:var(--text3);text-align:center;padding:.625rem 0 0}
+
+@media(max-width:380px){.hdr-sub{display:none}.ntab{font-size:8px}}
+</style>
+</head>
+<body>
+
+<!-- VPN BANNER -->
+<div class="vpn" id="vpnBanner">
+  <span>⚠️</span>
+  <span>မြန်မာပြည်ထဲကနေ သုံးသူတွေ — <b>VPN ဖွင့်ထားပါ</b> (Psiphon / Lantern)</span>
+  <button class="vpn-x" onclick="document.getElementById('vpnBanner').style.display='none';localStorage.setItem('vpn_ok','1')">✕</button>
+</div>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-logo">
+    <div class="hdr-n">N</div>
+    <div>
+      <div class="hdr-title">TNV FACT ARENA</div>
+      <div class="hdr-sub">The Nation Voice Myanmar</div>
+    </div>
+  </div>
+  <div class="hdr-live">
+    <div class="hdr-dot" id="liveDot"></div>
+    <span id="liveStatus">CONNECT</span>
+  </div>
+</header>
+
+<!-- VIEW: CHALLENGE -->
+<div class="view on" id="v-challenge">
+  <div class="mx">
+    <div class="warnx">⚠️ ဒီ platform မှာ <b>fact-check သာလုပ်ပါ</b> — မြေပြင်သတင်း၊ ကိုယ်ရေးကိုယ်တာ အချက်အလက်တွေ မတင်ပါနဲ့</div>
+    <div class="tog">
+      <button class="togb on" id="tLive" onclick="setHist(false)">လက်ရှိ Challenge</button>
+      <button class="togb" id="tHist" onclick="setHist(true)">မှတ်တမ်း</button>
+    </div>
+    <div id="challengeArea"></div>
+    <div id="topSubs"></div>
+    <p class="hint">10s တစ်ကြိမ် sync</p>
+  </div>
+</div>
+
+<!-- VIEW: SUBMIT -->
+<div class="view" id="v-submit">
+  <div class="mx">
+    <div id="submitAlert"></div>
+    <div class="warn"><b>⚠️ အမည်အစစ် မသုံးပါနဲ့</b>မြန်မာပြည်ကနေ ပါဝင်သူတွေ — Alias တစ်ခုသာ သုံးပါ</div>
+    <div id="submitRef"></div>
+    <div class="fg">
+      <label class="fl">Username (Alias)</label>
+      <input class="fi" type="text" id="un" placeholder="bird_77" maxlength="30">
+      <div style="font-size:11px;color:var(--red3);margin-top:4px">အစစ်နာမည် မဖြစ်ရဘူး</div>
+      <div class="chips" id="chips"></div>
+    </div>
+    <div class="fg">
+      <label class="fl">ရှာတွေ့သော အကြောင်းအရာ</label>
+      <textarea class="fta" id="evidence" placeholder="ဥပမာ:&#10;- ဒီ claim မှန်တယ် / မမှန်ဘူး ဆိုတာ ဘာကြောင့်...&#10;- Source: https://..."></textarea>
+    </div>
+    <button class="btn" id="subBtn" onclick="doSubmit()">အဖြေတင်မည်</button>
+  </div>
+</div>
+
+<!-- VIEW: REPORT -->
+<div class="view" id="v-report">
+  <div class="mx">
+    <div id="reportAlert"></div>
+    <div class="warnx">⚠️ <b>VPN ဖွင့်ထားပါ</b> — ကိုယ်ရေးကိုယ်တာ အချက်အလက် မထည့်ပါနဲ့</div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--red2);border-radius:0 10px 10px 0;padding:1.125rem;margin-bottom:.875rem">
+      <div style="font-family:var(--hd);font-size:12px;letter-spacing:.1em;color:var(--red3);margin-bottom:.875rem">📰 REPORTER SUBMISSION</div>
+      <div class="fg"><label class="fl">သတင်းခေါင်းစဉ်</label><input class="fi" type="text" id="repTitle" placeholder="ဥပမာ: မကွေး မြို့နယ် တွင် ..."></div>
+      <div class="fg"><label class="fl">တည်နေရာ (optional)</label><input class="fi" type="text" id="repLoc" placeholder="ဥပမာ: မကွေး မြို့နယ်"></div>
+      <div class="fg"><label class="fl">သတင်းအကြောင်းအရာ</label><textarea class="fta" style="min-height:130px" id="repBody" placeholder="သင်မြင်ကြုံတွေ့ရှိသမျှ အသေးစိတ်ရေးပါ...&#10;&#10;- ဘာဖြစ်ခဲ့သလဲ?&#10;- ဘယ်အချိန်မှာ?&#10;- သက်သေ?"></textarea></div>
+    </div>
+    <button class="btn" id="repBtn" onclick="doReport()">သတင်းတင်မည်</button>
+  </div>
+</div>
+
+<!-- VIEW: CHAT -->
+<div class="view" id="v-chat">
+  <div class="mx">
+    <div class="warnx">⚠️ <b>မြေပြင်သတင်း မတင်ပါနဲ့</b> — fact-check discussion သာ</div>
+    <div class="chat-w">
+      <div class="chat-m" id="chatMsgs"><div class="empty"><div class="empty-ic">💬</div><b>Chat ဗလာနေသေးတယ်</b><p>ပထမဆုံး message ပို့ပါ</p></div></div>
+      <div class="chat-bot">
+        <div class="chat-unr"><span class="chat-unlb">အမည်:</span><input class="fi" style="flex:1;padding:7px 10px;font-size:13px" type="text" id="chatUn" placeholder="alias..." maxlength="30"></div>
+        <div class="chat-row">
+          <input class="chat-fi" type="text" id="chatMsg" placeholder="Message ရေးပါ..." maxlength="400" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();doChat()}">
+          <button class="chat-send" onclick="doChat()">ပို့</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VIEW: LEADERBOARD -->
+<div class="view" id="v-board">
+  <div class="mx">
+    <div class="lb-hero"><div class="lb-htitle">LEADERBOARD</div><div class="lb-hsub">TNV Fact Arena — Top Verifiers</div></div>
+    <div id="lbList"></div>
+    <p class="hint">Points ရမှ ဒီမှာပေါ်လာမယ်</p>
+  </div>
+</div>
+
+<!-- VIEW: TRAINING -->
+<div class="view" id="v-training">
+  <div class="mx">
+    <div class="mod-tabs" id="modTabs"></div>
+    <div id="trainingArea"></div>
+  </div>
+</div>
+
+<!-- VIEW: EDITOR -->
+<div class="view" id="v-editor">
+  <div class="mx">
+    <div id="edAlert"></div>
+    <div id="edLogin">
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.5rem">
+        <div style="font-family:var(--hd);font-size:16px;letter-spacing:.08em;color:var(--text2);margin-bottom:1rem">EDITOR LOGIN</div>
+        <div class="fg"><label class="fl">Password</label><input class="fi" type="password" id="edPw" onkeydown="if(event.key==='Enter')doEdLogin()"></div>
+        <button class="btn" onclick="doEdLogin()">ဝင်မည်</button>
+      </div>
+    </div>
+    <div id="edPanel" style="display:none">
+      <div class="ed-sec">
+        <div class="ed-ttl">Challenge တင်မည်</div>
+        <div class="fg"><label class="fl">အမျိုးအစား</label>
+          <select class="fse" id="cType">
+            <option value="Claim">Claim — မှန်/မမှန် စစ်မည်</option>
+            <option value="Image">Image — မူရင်း source ရှာမည်</option>
+            <option value="Location">Location — တည်နေရာ အတည်ပြု</option>
+            <option value="Video">Video — စစ်မှန်မှု စစ်ဆေး</option>
+          </select>
+        </div>
+        <div class="fg"><label class="fl">ခေါင်းစဉ်</label><input class="fi" type="text" id="cTitle" placeholder="Challenge ခေါင်းစဉ်..."></div>
+        <div class="fg"><label class="fl">အသေးစိတ်</label><textarea class="fta" id="cBody" placeholder="Challenge အသေးစိတ်..."></textarea></div>
+        <div class="row2"><button class="btn" onclick="doPost()">တင်မည်</button><button class="btns" onclick="doClose()">Session ပိတ်</button></div>
+      </div>
+      <div class="ed-sec">
+        <div class="ed-ttl">Submissions <span id="subCount"></span></div>
+        <div id="edSubs"><div style="font-size:13px;color:var(--text3)">Submissions မရှိသေးပါ</div></div>
+      </div>
+      <div class="ed-sec">
+        <div class="ed-ttl">Reporter Submissions <span id="repCount"></span></div>
+        <div id="edReports"><div style="font-size:13px;color:var(--text3)">Reports မရှိသေးပါ</div></div>
+      </div>
+      <div class="ed-sec">
+        <div class="ed-ttl">ယခင် Challenges</div>
+        <div id="pastCh"><div style="font-size:13px;color:var(--text3)">မရှိသေးပါ</div></div>
+      </div>
+      <div class="ed-sec">
+        <div class="ed-ttl">Reset</div>
+        <div class="row2" style="max-width:240px">
+          <button class="btnd" onclick="doReset()">Data ဖျက်</button>
+          <button class="btnd" onclick="doClearChat()">Chat ဖျက်</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="nav">
+  <button class="ntab on" onclick="goTab(this,'challenge')"><span class="ntab-ic">📡</span>ဆွေးနွေးရာ</button>
+  <button class="ntab" onclick="goTab(this,'submit')"><span class="ntab-ic">✍️</span>ဆွေးနွေးရေး</button>
+  <button class="ntab" onclick="goTab(this,'report')"><span class="ntab-ic">📰</span>သတင်းပို့</button>
+  <button class="ntab" onclick="goTab(this,'chat')"><span class="ntab-ic">💬</span>Chat</button>
+  <button class="ntab" onclick="goTab(this,'board')"><span class="ntab-ic">🏆</span>ရမှတ်</button>
+  <button class="ntab" onclick="goTab(this,'training')"><span class="ntab-ic">📚</span>သင်ခန်း</button>
+  <button class="ntab" onclick="goTab(this,'editor')"><span class="ntab-ic">🔐</span>Editor</button>
+</nav>
+
+<div class="sync" id="syncEl">SYNC</div>
+
+<script>
+// CONFIG
+const DB = 'https://tnv-fact-arena-default-rtdb.firebaseio.com';
+const PASS = 'TNVEditor2026';
+const ALIASES = ['bird_77','river_44','cloud_21','star_09','wind_33','moon_15','tree_88','fish_62','hill_50','rain_37'];
+
+// STATE
+let isEd = false;
+let curTab = 'challenge';
+let showHist = false;
+let lastChatTs = 0;
+let refreshTimer = null;
+
+// UTILS
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function arr(o) {
+  if (!o) return [];
+  return Object.entries(o).map(([id,v]) => Object.assign({}, v, {_id: id}));
+}
+function ago(ts) {
+  if (!ts) return '';
+  const d = Date.now() - ts;
+  if (d < 60000) return 'ခုနက';
+  if (d < 3600000) return Math.floor(d/60000) + 'မိနစ်';
+  if (d < 86400000) return Math.floor(d/3600000) + 'နာရီ';
+  return new Date(ts).toLocaleDateString('my-MM');
+}
+function tier(p) {
+  if (p >= 5000) return '⭐ Master Verifier';
+  if (p >= 2000) return '🔍 Senior Investigator';
+  if (p >= 500)  return '📰 Field Correspondent';
+  return '🌱 Rookie Reporter';
+}
+function ini(n) {
+  if (!n) return '?';
+  const w = n.trim().split(/\s+/);
+  return (w.length > 1 ? w[0][0] + w[w.length-1][0] : n.substring(0,2)).toUpperCase();
+}
+function showAlert(id, type, msg, ms) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = '<div class="al al' + type + '">' + esc(msg) + '</div>';
+  if (ms !== 0) setTimeout(function(){ el.innerHTML = ''; }, ms || 5000);
+}
+function showSync() {
+  const el = document.getElementById('syncEl');
+  el.classList.add('on');
+  setTimeout(function(){ el.classList.remove('on'); }, 1200);
+}
+
+// FIREBASE
+async function fbGet(path) {
+  try {
+    const r = await fetch(DB + '/' + path + '.json', {cache: 'no-store'});
+    if (!r.ok) return null;
+    return await r.json();
+  } catch(e) { return null; }
+}
+async function fbSet(path, data) {
+  try {
+    const r = await fetch(DB + '/' + path + '.json', {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    });
+    return r.ok;
+  } catch(e) { return false; }
+}
+async function fbPatch(path, data) {
+  try {
+    const r = await fetch(DB + '/' + path + '.json', {
+      method: 'PATCH',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    });
+    return r.ok;
+  } catch(e) { return false; }
+}
+async function fbPush(path, data) {
+  try {
+    const r = await fetch(DB + '/' + path + '.json', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    });
+    if (!r.ok) return null;
+    return (await r.json()).name;
+  } catch(e) { return null; }
+}
+async function fbDel(path) {
+  try { await fetch(DB + '/' + path + '.json', {method: 'DELETE'}); } catch(e) {}
+}
+
+// TAB NAVIGATION
+function goTab(btn, tab) {
+  document.querySelectorAll('.ntab').forEach(function(t){ t.classList.remove('on'); });
+  document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('on'); });
+  btn.classList.add('on');
+  document.getElementById('v-' + tab).classList.add('on');
+  curTab = tab;
+  if (tab === 'challenge') renderChallenge();
+  if (tab === 'submit')    updateSubmitRef();
+  if (tab === 'chat')      renderChat();
+  if (tab === 'board')     renderLB();
+  if (tab === 'training')  initTraining();
+  if (tab === 'editor' && isEd) { loadEdSubs(); loadEdReports(); loadPast(); }
+}
+
+function setHist(h) {
+  showHist = h;
+  document.getElementById('tLive').classList.toggle('on', !h);
+  document.getElementById('tHist').classList.toggle('on', h);
+  renderChallenge();
+}
+
+// CHALLENGE
+async function renderChallenge() {
+  showSync();
+  const dot = document.getElementById('liveDot');
+  const stat = document.getElementById('liveStatus');
+  const el = document.getElementById('challengeArea');
+  const pre = document.getElementById('topSubs');
+
+  const chData = await fbGet('challenges');
+  const subsData = await fbGet('submissions');
+  const subs = arr(subsData);
+
+  if (!chData) {
+    el.innerHTML = '<div class="empty"><div class="empty-ic">📡</div><b>Challenge မရှိသေးပါ</b><p>Editor က challenge ပို့ပြီးမှ ဒီမှာပေါ်လာမယ်</p></div>';
+    dot.className = 'hdr-dot';
+    stat.textContent = 'WAIT';
+    pre.innerHTML = '';
+    return;
+  }
+
+  const all = arr(chData).sort(function(a,b){ return b.postedAt - a.postedAt; });
+  const live = all.find(function(c){ return c.status === 'active'; });
+
+  if (showHist) {
+    dot.className = 'hdr-dot';
+    stat.textContent = 'ARCHIVE';
+    const closed = all.filter(function(c){ return c.status === 'closed'; });
+    if (!closed.length) {
+      el.innerHTML = '<div class="empty"><div class="empty-ic">📋</div><b>ယခင် challenges မရှိသေးပါ</b></div>';
+      pre.innerHTML = '';
+      return;
+    }
+    el.innerHTML = closed.map(function(ch) {
+      const cs = subs.filter(function(s){ return s.challengeId === ch._id; });
+      const top = cs.filter(function(s){ return s.points > 0; }).sort(function(a,b){ return b.points - a.points; })[0];
+      return '<div class="card dim"><div class="ctop"><span class="ctag grey">ပြီး · ' + esc(ch.type) + '</span></div>' +
+        '<p class="ctitle">' + esc(ch.title) + '</p>' +
+        '<div class="cmeta"><span>📅 ' + ago(ch.postedAt) + '</span><span>👥 ' + cs.length + '</span>' +
+        (top ? '<span style="color:var(--gold)">🏆 ' + esc(top.username) + '</span>' : '') + '</div></div>';
+    }).join('');
+    pre.innerHTML = '';
+    return;
+  }
+
+  if (!live) {
+    el.innerHTML = '<div class="empty"><div class="empty-ic">📡</div><b>လက်ရှိ challenge မရှိပါ</b><p>Session ပိတ်ထားသည်</p></div>';
+    dot.className = 'hdr-dot';
+    stat.textContent = 'CLOSED';
+    pre.innerHTML = '';
+    return;
+  }
+
+  const ls = subs.filter(function(s){ return s.challengeId === live._id; });
+  const vf = ls.filter(function(s){ return s.points > 0; }).sort(function(a,b){ return b.points - a.points; });
+
+  el.innerHTML = '<div class="card"><div class="ctop"><span class="ctag">' + esc(live.type) + '</span><span class="clive">LIVE</span></div>' +
+    '<p class="ctitle">' + esc(live.title) + '</p>' +
+    '<p class="cbody">' + esc(live.content) + '</p>' +
+    '<div class="cmeta"><span>🕐 ' + ago(live.postedAt) + '</span><span>👥 ' + ls.length + '</span>' +
+    (vf.length ? '<span style="color:var(--green)">✓ ' + vf.length + '</span>' : '') + '</div></div>';
+
+  dot.className = 'hdr-dot on';
+  stat.textContent = 'LIVE';
+
+  if (vf.length) {
+    pre.innerHTML = '<div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.5rem">Top Submissions</div>' +
+      vf.slice(0,3).map(function(s) {
+        return '<div class="scard"><div class="shead"><span class="sname">' + esc(s.username) + '</span><span class="spts">+' + s.points + 'pts</span></div>' +
+          '<div class="sbody">' + esc(s.content.substring(0,150)) + (s.content.length > 150 ? '...' : '') + '</div></div>';
+      }).join('');
+  } else {
+    pre.innerHTML = '';
+  }
+}
+
+async function updateSubmitRef() {
+  const chData = await fbGet('challenges');
+  const el = document.getElementById('submitRef');
+  if (!chData) { el.innerHTML = '<div class="al alw">Active challenge မရှိပါ</div>'; return; }
+  const live = arr(chData).find(function(c){ return c.status === 'active'; });
+  if (live) {
+    el.innerHTML = '<div style="background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--red);border-radius:0 8px 8px 0;padding:9px 13px;margin-bottom:.875rem">' +
+      '<div style="font-size:10px;font-weight:700;color:var(--red3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:3px">Current Challenge</div>' +
+      '<div style="font-size:13px;color:var(--text2)">' + esc(live.title) + '</div></div>';
+  } else {
+    el.innerHTML = '<div class="al alw">Active challenge မရှိပါ — Editor က challenge ပို့ပြီးမှ တင်ပါ</div>';
+  }
+}
+
+async function doSubmit() {
+  const btn = document.getElementById('subBtn');
+  const un = document.getElementById('un').value.trim();
+  const ev = document.getElementById('evidence').value.trim();
+  if (!un) { showAlert('submitAlert','e','Username ထည့်ပါ'); return; }
+  if (ev.length < 10) { showAlert('submitAlert','e','အကြောင်းအရာ ပိုအသေးစိတ်ရေးပါ'); return; }
+  btn.disabled = true; btn.textContent = 'တင်နေသည်...';
+  const chData = await fbGet('challenges');
+  const live = chData ? arr(chData).find(function(c){ return c.status === 'active'; }) : null;
+  if (!live) { showAlert('submitAlert','e','Active challenge မရှိပါ'); btn.disabled = false; btn.textContent = 'အဖြေတင်မည်'; return; }
+  const subsData = await fbGet('submissions');
+  if (arr(subsData).find(function(s){ return s.username === un && s.challengeId === live._id; })) {
+    showAlert('submitAlert','e','"' + un + '" က တစ်ကြိမ်တင်ပြီးပြီ');
+    btn.disabled = false; btn.textContent = 'အဖြေတင်မည်'; return;
+  }
+  const key = await fbPush('submissions', {challengeId: live._id, username: un, content: ev, timestamp: Date.now(), points: 0});
+  if (key) {
+    localStorage.setItem('tnv_un', un);
+    document.getElementById('evidence').value = '';
+    showAlert('submitAlert','s','တင်ပြီးပါပြီ ✓  Editor review ကို စောင့်ပါ');
+    showSync();
+  } else {
+    showAlert('submitAlert','e','Error — network စစ်ကြည့်ပြီး ထပ်ကြိုးစားပါ');
+  }
+  btn.disabled = false; btn.textContent = 'အဖြေတင်မည်';
+}
+
+async function doReport() {
+  const btn = document.getElementById('repBtn');
+  const title = document.getElementById('repTitle').value.trim();
+  const loc = document.getElementById('repLoc').value.trim();
+  const body = document.getElementById('repBody').value.trim();
+  if (!title && !body) { showAlert('reportAlert','e','ခေါင်းစဉ် သို့မဟုတ် အကြောင်းအရာ ထည့်ပါ'); return; }
+  btn.disabled = true; btn.textContent = 'တင်နေသည်...';
+  const key = await fbPush('reports', {title: title, location: loc, body: body, timestamp: Date.now(), status: 'pending'});
+  if (key) {
+    document.getElementById('repTitle').value = '';
+    document.getElementById('repLoc').value = '';
+    document.getElementById('repBody').value = '';
+    showAlert('reportAlert','s','သတင်းတင်ပြီးပါပြီ ✓  Editor review ကို စောင့်ပါ');
+    showSync();
+  } else {
+    showAlert('reportAlert','e','Error');
+  }
+  btn.disabled = false; btn.textContent = 'သတင်းတင်မည်';
+}
+
+async function renderChat() {
+  showSync();
+  const msgs = await fbGet('chat');
+  const el = document.getElementById('chatMsgs');
+  if (!msgs) {
+    el.innerHTML = '<div class="empty"><div class="empty-ic">💬</div><b>Chat ဗလာနေသေးတယ်</b><p>ပထမဆုံး message ပို့ပါ</p></div>';
+    return;
+  }
+  const list = arr(msgs).sort(function(a,b){ return a.timestamp - b.timestamp; });
+  const latest = list.length ? list[list.length-1].timestamp : 0;
+  if (latest <= lastChatTs && el.children.length > 1) return;
+  lastChatTs = latest;
+  el.innerHTML = list.map(function(m) {
+    return '<div class="msg"><div class="msg-av ' + (m.isEd ? 'ed' : '') + '">' + esc(ini(m.username)) + '</div>' +
+      '<div class="msg-bd"><div class="msg-mt"><span class="msg-un ' + (m.isEd ? 'ed' : '') + '">' + esc(m.username) + '</span>' +
+      (m.isEd ? '<span class="msg-badge">EDITOR</span>' : '') +
+      '<span class="msg-t">' + ago(m.timestamp) + '</span></div>' +
+      '<div class="msg-tx ' + (m.isEd ? 'ed' : '') + '">' + esc(m.message) + '</div></div></div>';
+  }).join('');
+  el.scrollTop = el.scrollHeight;
+}
+
+async function doChat() {
+  const un = document.getElementById('chatUn').value.trim();
+  const msg = document.getElementById('chatMsg').value.trim();
+  if (!un) { alert('အမည်ထည့်ပါ'); return; }
+  if (!msg) return;
+  document.getElementById('chatMsg').value = '';
+  localStorage.setItem('tnv_chat_un', un);
+  await fbPush('chat', {username: un, message: msg, timestamp: Date.now(), isEd: isEd});
+  lastChatTs = 0;
+  renderChat();
+}
+
+async function renderLB() {
+  showSync();
+  const lb = await fbGet('leaderboard');
+  const el = document.getElementById('lbList');
+  const entries = lb ? Object.entries(lb).filter(function(e){ return e[1] > 0; }).sort(function(a,b){ return b[1]-a[1]; }) : [];
+  if (!entries.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-ic">🏆</div><b>အဆင့်မှတ်တမ်း မရှိသေးပါ</b><p>ပထမ points ရတဲ့သူ ဒီမှာပေါ်လာမယ်</p></div>';
+    return;
+  }
+  const cls = function(i){ return i===0?'g':i===1?'sv':i===2?'br':''; };
+  const rk = function(i){ return i===0?'①':i===1?'②':i===2?'③':i+1; };
+  el.innerHTML = entries.map(function(e, i) {
+    return '<div class="lb-row ' + (i<3?'top':'') + '"><span class="lb-rk ' + cls(i) + '">' + rk(i) + '</span>' +
+      '<div class="lb-inf"><div class="lb-nm">' + esc(e[0]) + '</div><div class="lb-tr">' + tier(e[1]) + '</div></div>' +
+      '<span class="lb-pts">' + e[1] + '</span></div>';
+  }).join('');
+}
+
+// EDITOR
+function doEdLogin() {
+  if (document.getElementById('edPw').value === PASS) {
+    isEd = true;
+    document.getElementById('edLogin').style.display = 'none';
+    document.getElementById('edPanel').style.display = 'block';
+    loadEdSubs(); loadEdReports(); loadPast();
+  } else {
+    showAlert('edAlert','e','Password မမှန်ပါ');
+    document.getElementById('edPw').value = '';
+  }
+}
+
+async function doPost() {
+  const title = document.getElementById('cTitle').value.trim();
+  const content = document.getElementById('cBody').value.trim();
+  const type = document.getElementById('cType').value;
+  if (!title || !content) { showAlert('edAlert','e','ခေါင်းစဉ်နှင့် အသေးစိတ် ထည့်ပါ'); return; }
+  const id = Date.now().toString();
+  if (await fbSet('challenges/' + id, {id: id, title: title, content: content, type: type, status: 'active', postedAt: Date.now()})) {
+    document.getElementById('cTitle').value = '';
+    document.getElementById('cBody').value = '';
+    showAlert('edAlert','s','Challenge တင်ပြီးပါပြီ ✓');
+    loadEdSubs(); loadPast();
+  } else { showAlert('edAlert','e','Error'); }
+}
+
+async function doClose() {
+  const chData = await fbGet('challenges');
+  const live = chData ? arr(chData).find(function(c){ return c.status === 'active'; }) : null;
+  if (!live) { showAlert('edAlert','w','Active challenge မရှိပါ'); return; }
+  await fbPatch('challenges/' + live._id, {status: 'closed'});
+  showAlert('edAlert','s','Session ပိတ်ပြီးပါပြီ');
+  loadPast();
+}
+
+async function loadEdSubs() {
+  showSync();
+  const chData = await fbGet('challenges');
+  const subsData = await fbGet('submissions');
+  const el = document.getElementById('edSubs');
+  const badge = document.getElementById('subCount');
+  const live = chData ? arr(chData).find(function(c){ return c.status === 'active'; }) : null;
+  const subs = arr(subsData).filter(function(s){ return live && s.challengeId === live._id; }).sort(function(a,b){ return b.timestamp - a.timestamp; });
+  badge.textContent = subs.length ? '(' + subs.length + ')' : '';
+  if (!subs.length) { el.innerHTML = '<div style="font-size:13px;color:var(--text3)">' + (live ? 'Submissions မရှိသေးပါ' : 'Active challenge မရှိပါ') + '</div>'; return; }
+  el.innerHTML = subs.map(function(s) {
+    return '<div class="scard"><div class="shead"><span class="sname">' + esc(s.username) + '</span><span class="stime">' + ago(s.timestamp) + '</span></div>' +
+      '<div class="sbody" style="margin:5px 0 7px">' + esc(s.content) + '</div>' +
+      '<div class="award-r"><input class="pts-in" type="number" id="pts_' + esc(s._id) + '" min="0" max="200" placeholder="pts" value="' + (s.points||'') + '">' +
+      '<button class="btna" onclick="doAward(\'' + esc(s._id) + '\',\'' + esc(s.username) + '\',' + (s.points||0) + ')">Points ပေး</button>' +
+      (s.points > 0 ? '<span class="vmark">✓ ' + s.points + 'pts</span>' : '') + '</div></div>';
+  }).join('');
+}
+
+async function doAward(fk, un, old) {
+  const pEl = document.getElementById('pts_' + fk);
+  if (!pEl) return;
+  const pts = parseInt(pEl.value) || 0;
+  await fbPatch('submissions/' + fk, {points: pts});
+  const lb = await fbGet('leaderboard') || {};
+  lb[un] = Math.max(0, (lb[un]||0) - old + pts);
+  await fbSet('leaderboard', lb);
+  showAlert('edAlert','s', un + ' ကို ' + pts + 'pts ပေးပြီးပါပြီ ✓');
+  loadEdSubs();
+}
+
+async function loadEdReports() {
+  const reps = await fbGet('reports');
+  const el = document.getElementById('edReports');
+  const badge = document.getElementById('repCount');
+  const list = arr(reps).sort(function(a,b){ return b.timestamp - a.timestamp; });
+  badge.textContent = list.length ? '(' + list.length + ')' : '';
+  if (!list.length) { el.innerHTML = '<div style="font-size:13px;color:var(--text3)">Reports မရှိသေးပါ</div>'; return; }
+  el.innerHTML = list.map(function(r) {
+    return '<div class="scard"><div class="shead"><span class="sname">' + esc(r.title||'(ခေါင်းစဉ်မပါ)') + '</span><span class="stime">' + ago(r.timestamp) + '</span></div>' +
+      (r.location ? '<div style="font-size:11px;color:var(--red3);margin-bottom:3px">📍 ' + esc(r.location) + '</div>' : '') +
+      '<div class="sbody">' + esc(r.body) + '</div>' +
+      '<div class="award-r" style="margin-top:7px"><button class="btna" onclick="markRep(\'' + esc(r._id) + '\')">✓ စစ်ဆေးပြီး</button>' +
+      '<button class="btnd" style="font-size:11px;padding:4px 10px" onclick="delRep(\'' + esc(r._id) + '\')">ဖျက်</button></div></div>';
+  }).join('');
+}
+
+async function markRep(id) { await fbPatch('reports/' + id, {status: 'reviewed'}); loadEdReports(); }
+async function delRep(id) { await fbDel('reports/' + id); loadEdReports(); }
+
+async function loadPast() {
+  const chData = await fbGet('challenges');
+  const el = document.getElementById('pastCh');
+  if (!chData) { el.innerHTML = '<div style="font-size:13px;color:var(--text3)">မရှိသေးပါ</div>'; return; }
+  const closed = arr(chData).filter(function(c){ return c.status === 'closed'; }).sort(function(a,b){ return b.postedAt - a.postedAt; });
+  if (!closed.length) { el.innerHTML = '<div style="font-size:13px;color:var(--text3)">မရှိသေးပါ</div>'; return; }
+  el.innerHTML = closed.map(function(ch) {
+    return '<div class="scard" style="margin-bottom:.5rem"><div class="shead"><span class="sname" style="font-size:12px">' +
+      esc(ch.title.substring(0,45)) + (ch.title.length>45?'...':'') +
+      '</span><span class="stime">' + ago(ch.postedAt) + '</span></div></div>';
+  }).join('');
+}
+
+async function doReset() {
+  if (!confirm('Data အားလုံး ဖျက်မှာ သေချာလား?')) return;
+  await Promise.all([fbDel('challenges'), fbDel('submissions'), fbDel('leaderboard')]);
+  showAlert('edAlert','s','Reset ပြီးပါပြီ');
+  loadEdSubs(); loadPast();
+}
+
+async function doClearChat() {
+  if (!confirm('Chat messages ဖျက်မှာ သေချာလား?')) return;
+  await fbDel('chat');
+  lastChatTs = 0;
+  showAlert('edAlert','s','Chat ဖျက်ပြီးပါပြီ');
+  renderChat();
+}
+
+// CHIPS
+function renderChips() {
+  const shuffled = ALIASES.slice().sort(function(){ return Math.random() - .5; }).slice(0,5);
+  document.getElementById('chips').innerHTML = shuffled.map(function(a) {
+    return '<span class="chip" onclick="document.getElementById(\'un\').value=\'' + a + '\';document.getElementById(\'chatUn\').value=\'' + a + '\'">' + a + '</span>';
+  }).join('');
+}
+
+// TRAINING
+var curMod = 0;
+var curLesson = 0;
+var quizDone = false;
+
+var MODS = [
+  {
+    name: '📰 သတင်းရေးနည်း',
+    lessons: [
+      {title:'5W1H နည်းလမ်း', icon:'❓',
+       body:'<p>သတင်းတစ်ပုဒ်ကောင်းဖို့ မေးခွန်း ၆ ခုဖြေရသည်—</p><p><b>Who</b> — ဘယ်သူနဲ့ ဆိုင်သလဲ?<br><b>What</b> — ဘာဖြစ်ခဲ့သလဲ?<br><b>When</b> — ဘယ်အချိန်မှာ?<br><b>Where</b> — ဘယ်နေရာမှာ?<br><b>Why</b> — ဘာကြောင့်ဖြစ်သလဲ?<br><b>How</b> — ဘယ်လိုဖြစ်ခဲ့သလဲ?</p><p>ဒီ မေးခွန်း ၆ ခုအားလုံး ဖြေနိုင်မှသာ သတင်းပြည့်စုံသည်ဟု ဆိုနိုင်သည်။</p>',
+       quiz:{q:'5W1H မှာ W ဘယ်နှစ်ခုရှိသလဲ?',opts:['3','4','5','6'],ans:2}},
+      {title:'Inverted Pyramid ပုံစံ', icon:'🔺',
+       body:'<p>သတင်းရေးတဲ့အခါ အရေးကြီးဆုံးအချက်ကို <b>အရင်ဆုံး</b> ရေးပါ။</p><p>▼ <b>အပေါ်ဆုံး</b> — အရေးကြီးဆုံး သတင်းအချက်<br>▼ <b>အလယ်</b> — ထောက်ကူသော အသေးစိတ်<br>▼ <b>အောက်ဆုံး</b> — နောက်ခံသတင်း၊ ဆက်စပ်အချက်</p><p>ဘာကြောင့်? — ဖတ်သူများ ပထမဆုံးပိုဒ်ကိုသာ ဖတ်တတ်ကြသောကြောင့်ဖြစ်သည်။</p>',
+       quiz:{q:'Inverted Pyramid တွင် ဘာကို အပေါ်ဆုံးထားသနည်း?',opts:['နောက်ခံသတင်း','အရေးကြီးဆုံးအချက်','ကိုးကားချက်','Editor မှတ်ချက်'],ans:1}},
+      {title:'Source ခေါ်နည်း', icon:'🎤',
+       body:'<p><b>Source ကောင်းဆိုတာ</b> — ဖြစ်ပျက်မှုနှင့် တိုက်ရိုက်ဆက်နွှယ်သော သက်သေသာဓကပင်ဖြစ်သည်။</p><p><b>Source အနည်းဆုံး ၂ ခု</b> cross-check မလုပ်မချင်း publish မလုပ်ပါနဲ့။</p><p>Open questions မေးပါ — "ဘာဖြစ်ခဲ့သလဲ?" ဆိုသောနည်းနဲ့ မေးပါ။ Quote တိတိကျကျ မှတ်ပါ။</p>',
+       quiz:{q:'Source အနည်းဆုံး ဘယ်နှစ်ခု cross-check လုပ်သင့်သနည်း?',opts:['1','2','3','4'],ans:1}}
+    ]
+  },
+  {
+    name: '🔍 Fact-Checking',
+    lessons: [
+      {title:'Fact-check ဘာလဲ?', icon:'🔬',
+       body:'<p><b>Fact-checking</b> ဆိုတာ သတင်းအချက်အလက်တစ်ခုကို သက်သေဖြင့် အတည်ပြုသည့် လုပ်ငန်းစဉ်ဖြစ်သည်။</p><p>Social media post တွင် ပျံ့နှံ့နေသော သတင်း၊ ပုံ/ဗီဒီယို၊ ကိန်းဂဏန်းများကို fact-check လုပ်ရသည်။</p><p><b>TNV Standard</b> — Field report → Source ၂ ခု cross-reference → Editor review → Publish</p>',
+       quiz:{q:'TNV fact-check process တွင် ဘာပထမဦးဆုံးလဲ?',opts:['Editor review','Publish','Field report ရယူ','Source cross-reference'],ans:2}},
+      {title:'ဓာတ်ပုံ Verification', icon:'🖼️',
+       body:'<p><b>Reverse Image Search သုံးနည်း</b></p><p>Google Images — images.google.com ဖွင့် → Camera icon နှိပ် → ပုံ upload</p><p>TinEye — tineye.com — ပိုကောင်းသော ရလဒ်ရတတ်သည်</p><p><b>ဘာရှာမလဲ?</b> — ပုံ၏ မူလ date၊ မူလ location၊ Context</p>',
+       quiz:{q:'Reverse image search tool တစ်ခုဘာလဲ?',opts:['Facebook','TinEye','YouTube','Twitter'],ans:1}},
+      {title:'Disinformation vs Misinformation', icon:'⚠️',
+       body:'<p><b>Misinformation</b> — မမှန်ကန်သောသတင်း၊ ရည်ရွယ်ချက်မပါဘဲ ဖြန့်ဝေသည်</p><p><b>Disinformation</b> — မမှန်ကန်သောသတင်း၊ ရည်ရွယ်ချက်ဖြင့် ဖန်တီးဖြန့်ဝေသည် — SAC propaganda ကဲ့သို့</p><p><b>Malinformation</b> — မှန်ကန်သောသတင်းဖြစ်သော်လည်း ထိခိုက်နစ်နာစေရန် ဖြန့်ဝေသည်</p>',
+       quiz:{q:'ရည်ရွယ်ချက်ဖြင့် မှားသောသတင်း ဖြန့်ဝေခြင်းကို ဘာဟုခေါ်သနည်း?',opts:['Misinformation','Malinformation','Disinformation','Propaganda'],ans:2}}
+    ]
+  },
+  {
+    name: '🔐 ဒစ်ဂျစ်တယ်လုံခြုံရေး',
+    lessons: [
+      {title:'VPN ဘာကြောင့်လိုသလဲ', icon:'🛡️',
+       body:'<p>မြန်မာပြည်တွင်းတွင် ISP နှင့် စစ်တပ်က သင်ဘာကြည့်နေသည်ကို မြင်နိုင်သည်။</p><p><b>VPN က</b> — traffic ကို encrypt လုပ်သည်၊ IP address ကို ဝှက်သည်</p><p><b>Free VPN</b> — Psiphon၊ Lantern၊ Tor Browser</p><p>VPN သုံးစဉ်တွင်လည်း ကိုယ်ရေးအချက်အလက် မထည့်ပါနဲ့။</p>',
+       quiz:{q:'မြန်မာပြည်တွင် free VPN ဘာသုံးလို့ရသနည်း?',opts:['ExpressVPN','Psiphon','NordVPN','Surfshark'],ans:1}},
+      {title:'Secure Messaging', icon:'💬',
+       body:'<p><b>မသုံးသင့်</b> — SMS (encrypt မဟုတ်)၊ Facebook Messenger (default end-to-end မဟုတ်)</p><p><b>သုံးသင့်</b></p><p><b>Signal</b> — End-to-end encrypted၊ phone number လိုသည်</p><p><b>Session</b> — End-to-end encrypted၊ phone number မလို — မြန်မာပြည်တွင်းကြောင်တို့အတွက် အကောင်းဆုံး</p>',
+       quiz:{q:'Phone number မလိုဘဲ သုံးနိုင်သော secure app ကဘာလဲ?',opts:['Signal','WhatsApp','Session','Viber'],ans:2}},
+      {title:'EXIF Data ဖျက်နည်း', icon:'📷',
+       body:'<p>ဓာတ်ပုံတွင် <b>EXIF metadata</b> ပါသည် — GPS location၊ time၊ device model</p><p>ဒီ data က source ကို ဖော်ထုတ်နိုင်သည်။</p><p><b>iOS</b> — Settings → Privacy → Location Services → Camera → Never</p><p><b>Android</b> — Camera settings → "Save location" ကို OFF</p><p>TNV Policy — Submit မလုပ်မီ metadata ဖျက်ပါ</p>',
+       quiz:{q:'EXIF data တွင် ဘာပါနိုင်သနည်း?',opts:['Password','GPS location','Bank account','Email'],ans:1}}
+    ]
+  },
+  {
+    name: '📷 Field Reporting',
+    lessons: [
+      {title:'မြင်ကွင်းဓာတ်ပုံ', icon:'📸',
+       body:'<p><b>Context ပြသောဓာတ်ပုံ</b> — ပတ်ဝန်းကျင်ပါ ထည့်ပါ၊ Human element ပါပါစေ</p><p><b>လုံခြုံရေး</b> — မဖော်ချင်သော မျက်နှာများကို blur လုပ်ပါ၊ Location ဖော်ပြနိုင်သော signboard သတိထားပါ</p><p><b>Quality</b> — Natural light သုံးပါ၊ Horizontal mode ဓာတ်ပုံကောင်းသည်၊ Flash မသုံးပါနဲ့</p>',
+       quiz:{q:'Field photo ရိုက်ရာတွင် ဘာကို blur လုပ်သင့်သနည်း?',opts:['Background','မဖော်ချင်သောမျက်နှာ','Camera','Landscape'],ans:1}},
+      {title:'Short Video Reporting', icon:'🎥',
+       body:'<p><b>မတိုင်မီ</b> — ဘာ story ပြချင်သလဲ ကြိုဆုံးဖြတ်ပါ၊ ၃၀-၆၀ seconds ရည်ရွယ်ပါ</p><p><b>ရိုက်ရာတွင်</b> — Steady ဖြစ်အောင်၊ Landscape mode၊ Audio ကောင်းအောင်</p><p><b>လုံခြုံရေး</b> — Faces blur (CapCut / InShot app)၊ Location signboard blur</p><p><b>Caption</b> — Where + When + What ၃ ခု ပါရမည်</p>',
+       quiz:{q:'ဗီဒီယောတွင် ဘာကို blur လုပ်သင့်သနည်း?',opts:['Sky','မဖော်ချင်သောမျက်နှာ','Camera','Background'],ans:1}}
+    ]
+  }
+];
+
+function initTraining() {
+  var tabs = document.getElementById('modTabs');
+  tabs.innerHTML = MODS.map(function(m, i) {
+    return '<button class="mtab ' + (i===curMod?'on':'') + '" onclick="switchMod(' + i + ')">' + esc(m.name) + '</button>';
+  }).join('');
+  renderLesson();
+}
+
+function switchMod(i) {
+  curMod = i;
+  curLesson = 0;
+  quizDone = false;
+  document.querySelectorAll('.mtab').forEach(function(b, j){ b.classList.toggle('on', j===i); });
+  renderLesson();
+}
+
+function renderLesson() {
+  var mod = MODS[curMod];
+  var lesson = mod.lessons[curLesson];
+  var total = mod.lessons.length;
+  quizDone = false;
+
+  var prog = mod.lessons.map(function(_, i) {
+    return '<div class="prog-seg ' + (i<=curLesson?'done':'') + '"></div>';
+  }).join('');
+
+  var opts = lesson.quiz.opts.map(function(o, i) {
+    return '<button class="qopt" id="qo' + i + '" onclick="checkQuiz(' + i + ')">' + esc(o) + '</button>';
+  }).join('');
+
+  var nav = '<div class="lesson-nav">';
+  if (curLesson > 0) nav += '<button class="btns" onclick="prevLesson()" style="flex:1">← အရင်</button>';
+  else nav += '<div style="flex:1"></div>';
+  if (curLesson < total-1) nav += '<button class="btn" onclick="nextLesson()" style="flex:2">ဆက်လက် →</button>';
+  else nav += '<button class="btn" onclick="doneLesson()" style="flex:2;background:var(--green)">✓ ပြီးပါပြီ</button>';
+  nav += '</div>';
+
+  document.getElementById('trainingArea').innerHTML =
+    '<div class="prog-bar">' + prog + '</div>' +
+    '<div class="lesson-card">' +
+      '<div class="lesson-icon">' + lesson.icon + '</div>' +
+      '<div class="lesson-title">' + esc(lesson.title) + '</div>' +
+      '<div class="lesson-body">' + lesson.body + '</div>' +
+    '</div>' +
+    '<div class="quiz-box">' +
+      '<div class="quiz-label">QUIZ</div>' +
+      '<div class="quiz-q">' + esc(lesson.quiz.q) + '</div>' +
+      '<div class="quiz-opts">' + opts + '</div>' +
+      '<div id="qfb"></div>' +
+    '</div>' +
+    nav;
+}
+
+function checkQuiz(idx) {
+  if (quizDone) return;
+  quizDone = true;
+  var ans = MODS[curMod].lessons[curLesson].quiz.ans;
+  var opts = MODS[curMod].lessons[curLesson].quiz.opts;
+  for (var i = 0; i < opts.length; i++) {
+    var btn = document.getElementById('qo' + i);
+    if (btn) {
+      btn.style.pointerEvents = 'none';
+      if (i === ans) btn.classList.add('correct');
+      else if (i === idx && idx !== ans) btn.classList.add('wrong');
+    }
+  }
+  var fb = document.getElementById('qfb');
+  if (fb) {
+    fb.innerHTML = idx === ans
+      ? '<div style="color:var(--green);font-weight:700;margin-top:7px;font-size:13px">✓ မှန်ကန်သည်!</div>'
+      : '<div style="color:#991b1b;font-weight:700;margin-top:7px;font-size:13px">✗ မှားသည်။ မှန်ကန်သောဖြေချက်: <b>' + esc(opts[ans]) + '</b></div>';
+  }
+}
+
+function nextLesson() { curLesson++; quizDone = false; renderLesson(); }
+function prevLesson() { curLesson--; quizDone = false; renderLesson(); }
+function doneLesson() {
+  document.getElementById('trainingArea').innerHTML =
+    '<div style="text-align:center;padding:3rem 1rem">' +
+    '<div style="font-size:48px;margin-bottom:12px">🎓</div>' +
+    '<div style="font-family:var(--hd);font-size:22px;letter-spacing:.08em;color:var(--text);margin-bottom:8px">သင်ခန်းစာပြီးပါပြီ</div>' +
+    '<div style="font-size:13px;color:var(--text2);margin-bottom:1.5rem">' + esc(MODS[curMod].name) + '</div>' +
+    '<button class="btn" onclick="curLesson=0;renderLesson()" style="max-width:200px;margin:0 auto">ပြန်ဖတ်မည်</button></div>';
+}
+
+// INIT
+if (localStorage.getItem('vpn_ok')) document.getElementById('vpnBanner').style.display = 'none';
+var svUn = localStorage.getItem('tnv_un');
+if (svUn) { document.getElementById('un').value = svUn; }
+var svChat = localStorage.getItem('tnv_chat_un');
+if (svChat) { document.getElementById('chatUn').value = svChat; }
+renderChips();
+renderChallenge();
+
+setInterval(function() {
+  if (curTab === 'challenge') renderChallenge();
+  if (curTab === 'chat')      renderChat();
+  if (curTab === 'board')     renderLB();
+  if (curTab === 'editor' && isEd) { loadEdSubs(); loadEdReports(); }
+}, 10000);
+
+// Unregister old service workers
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(function(regs) {
+    regs.forEach(function(r) { r.unregister(); });
+  });
+}
+</script>
+</body>
+</html>
