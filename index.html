@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>TNV Fact Arena</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="TNV Fact Arena">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;700;800&family=Noto+Sans+Myanmar:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f8f6f2;--bg2:#ffffff;--bg3:#f0ede8;--bg4:#e8e4de;
+  --border:#e0dbd4;--border2:#d0c8c0;
+  --accent:#7A1818;--accent2:#9B2020;--accent3:#BE3030;
+  --gold:#B8820A;--text:#1a1410;--text2:#5a5248;--text3:#9a9088;
+  --green:#166534;--red:#991b1b;
+  --font-display:'Bebas Neue',cursive;
+  --font-ui:'Syne',sans-serif;
+  --font-my:'Noto Sans Myanmar',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:1000;opacity:.25}
+body{font-family:var(--font-ui);background:var(--bg);color:var(--text);min-height:100vh;min-height:100dvh;overflow-x:hidden}
+.header{background:var(--bg);border-bottom:1px solid var(--border);padding:0 16px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;position:relative}
+.header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent3),transparent)}
+.logo-wrap{display:flex;align-items:center;gap:10px}
+.logo-mark{width:34px;height:34px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:22px;color:#fff;clip-path:polygon(0 0,100% 0,100% 75%,75% 100%,0 100%);line-height:1;padding-bottom:4px}
+.logo-text{line-height:1.1}
+.logo-title{font-family:var(--font-display);font-size:18px;color:var(--text);letter-spacing:.06em}
+.logo-sub{font-size:9px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;font-family:var(--font-ui)}
+.live-indicator{display:flex;align-items:center;gap:6px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--border2);transition:background .4s;flex-shrink:0}
+.dot.on{background:var(--green);box-shadow:0 0 8px rgba(34,197,94,.5);animation:pdot 2s infinite}
+@keyframes pdot{0%,100%{box-shadow:0 0 8px rgba(34,197,94,.5)}50%{box-shadow:0 0 0px rgba(34,197,94,0)}}
+.live-text{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;font-family:var(--font-ui)}
+.live-text.on{color:var(--green)}
+.vpn-banner{background:rgba(122,24,24,.08);border-bottom:1px solid rgba(122,24,24,.2);padding:8px 16px;display:flex;align-items:center;gap:8px;font-size:11px;color:#a06060;font-family:var(--font-my)}
+.vpn-banner strong{color:var(--accent3)}
+.vpn-x{margin-left:auto;background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer;padding:2px 4px}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(248,246,242,.97);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--border);display:flex;padding-bottom:env(safe-area-inset-bottom)}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:9px 2px 7px;background:none;border:none;cursor:pointer;color:var(--text3);font-family:var(--font-my);font-size:9px;font-weight:600;gap:3px;transition:color .15s;position:relative}
+.tab.active{color:var(--accent3)}
+.tab.active::before{content:'';position:absolute;top:0;left:20%;right:20%;height:2px;background:var(--accent);border-radius:0 0 2px 2px}
+.tab-icon{font-size:17px;line-height:1}
+.view{display:none;padding:16px 16px 100px;min-height:calc(100vh - 56px);animation:fadeUp .2s ease}
+.view.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+.max{max-width:680px;margin:0 auto}
+.sec-label{font-family:var(--font-display);font-size:13px;letter-spacing:.12em;color:var(--text3);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.htog-row{display:flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:1.25rem}
+.htog{flex:1;padding:8px;font-size:12px;font-weight:700;cursor:pointer;border:none;background:none;color:var(--text3);font-family:var(--font-my);transition:all .15s}
+.htog.active{background:var(--accent);color:#fff}
+.ccard{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:1.125rem;margin-bottom:.875rem;animation:slideIn .25s ease}
+.ccard.closed{border-left-color:var(--border2);opacity:.5}
+.ccard-top{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.ctype{font-family:var(--font-display);font-size:11px;letter-spacing:.1em;color:var(--accent3);background:rgba(122,24,24,.12);padding:3px 10px;border-radius:3px;border:1px solid rgba(122,24,24,.22)}
+.ctype.old{color:var(--text3);background:var(--bg3);border-color:var(--border)}
+.live-pill{display:flex;align-items:center;gap:4px;font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--green);font-family:var(--font-ui)}
+.live-pill::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green);animation:pdot 1.5s infinite}
+.ctitle{font-family:var(--font-my);font-size:16px;font-weight:700;color:var(--text);margin:0 0 8px;line-height:1.5}
+.ccontent{font-family:var(--font-my);font-size:13px;color:var(--text2);line-height:1.7;margin:0 0 10px;white-space:pre-wrap}
+.cmeta{font-size:11px;color:var(--text3);display:flex;gap:12px;flex-wrap:wrap;font-family:var(--font-ui)}
+.scard{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.875rem;margin-bottom:.625rem}
+.shead{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+.suser{font-size:13px;font-weight:700;color:var(--text);font-family:var(--font-ui)}
+.stime{font-size:10px;color:var(--text3);font-family:var(--font-ui)}
+.scontent{font-size:13px;color:var(--text2);line-height:1.6;font-family:var(--font-my)}
+.pts-badge{font-size:12px;font-weight:800;color:var(--gold);font-family:var(--font-display)}
+.ver-mark{font-size:10px;color:var(--green);font-weight:700}
+.award-row{display:flex;align-items:center;gap:6px;margin-top:8px}
+.pts-input{width:58px;padding:5px 7px;background:var(--bg2);border:1px solid var(--border2);border-radius:5px;color:var(--text);font-size:12px;text-align:center}
+.pts-input:focus{outline:none;border-color:var(--gold)}
+.fg{margin-bottom:.875rem}
+.fl{display:block;font-size:10px;font-weight:700;color:var(--text3);margin-bottom:6px;letter-spacing:.08em;text-transform:uppercase;font-family:var(--font-ui)}
+.fi,.fta,.fse{width:100%;padding:11px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:var(--font-my);transition:border .15s}
+.fi:focus,.fta:focus,.fse:focus{outline:none;border-color:var(--accent)}
+.fta{min-height:96px;resize:vertical}
+.fse{-webkit-appearance:none;cursor:pointer;font-family:var(--font-my)}.fse option{background:var(--bg2)}
+.un-hint{font-size:11px;color:var(--accent3);margin-top:5px;font-family:var(--font-my);line-height:1.5}
+.un-suggest{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.un-chip{padding:4px 12px;font-size:11px;font-family:var(--font-ui);font-weight:700;background:var(--bg3);border:1px solid var(--border2);border-radius:20px;color:var(--text2);cursor:pointer;transition:all .15s}
+.un-chip:hover{border-color:var(--accent);color:var(--accent3)}
+.warn{background:rgba(122,24,24,.07);border:1px solid rgba(122,24,24,.2);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:9px 13px;margin-bottom:.875rem;font-size:12px;color:#a06060;line-height:1.6;font-family:var(--font-my)}
+.warn strong{display:block;color:#c08080;margin-bottom:2px;font-size:13px}
+.warn-sm{background:rgba(122,24,24,.05);border:1px solid rgba(122,24,24,.14);border-left:3px solid rgba(122,24,24,.4);border-radius:0 7px 7px 0;padding:8px 12px;margin-bottom:.875rem;font-size:11px;color:#885050;line-height:1.6;font-family:var(--font-my)}
+/* REPORT */
+.report-card{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--accent2);border-radius:0 10px 10px 0;padding:1.125rem;margin-bottom:.875rem}
+.report-card-title{font-family:var(--font-display);font-size:13px;letter-spacing:.1em;color:var(--accent3);margin-bottom:.875rem}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.btn{display:block;width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font-my);transition:all .15s;position:relative;overflow:hidden}
+.btn::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.08),transparent)}
+.btn:hover{background:var(--accent2)}.btn:active{transform:scale(.98)}.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-sm{padding:8px 14px;font-size:12px;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);border-radius:7px;cursor:pointer;font-family:var(--font-my);transition:all .15s}
+.btn-sm:hover{border-color:var(--text3);color:var(--text)}
+.btn-award{padding:5px 12px;font-size:11px;font-weight:700;background:rgba(232,168,48,.1);color:var(--gold);border:1px solid rgba(232,168,48,.2);border-radius:5px;cursor:pointer;transition:all .15s}
+.btn-danger{padding:8px 14px;font-size:12px;background:rgba(239,68,68,.07);color:#f09090;border:1px solid rgba(239,68,68,.2);border-radius:6px;cursor:pointer;font-family:var(--font-my)}
+.row2{display:flex;gap:8px}.row2 .btn{flex:1}
+.al{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:.875rem;font-family:var(--font-my)}
+.al-s{background:rgba(34,197,94,.07);color:#86efac;border:1px solid rgba(34,197,94,.18)}
+.al-e{background:rgba(239,68,68,.07);color:#f09090;border:1px solid rgba(239,68,68,.18)}
+.al-w{background:rgba(232,168,48,.07);color:#c8a050;border:1px solid rgba(232,168,48,.18)}
+.chat-wrap{display:flex;flex-direction:column;height:calc(100dvh - 170px);max-height:620px}
+.chat-msgs{flex:1;overflow-y:auto;padding-bottom:.5rem}
+.chat-msgs::-webkit-scrollbar{width:3px}.chat-msgs::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.msg{display:flex;gap:9px;margin-bottom:.875rem;animation:fadeUp .2s ease}
+.msg-av{width:30px;height:30px;border-radius:8px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--text3);flex-shrink:0;margin-top:2px;font-family:var(--font-ui)}
+.msg-av.ed{background:rgba(122,24,24,.15);border-color:rgba(122,24,24,.3);color:var(--accent3)}
+.msg-body{flex:1;min-width:0}
+.msg-meta{display:flex;align-items:center;gap:6px;margin-bottom:3px}
+.msg-un{font-size:12px;font-weight:700;color:var(--text);font-family:var(--font-ui)}
+.msg-un.ed{color:var(--accent3)}
+.msg-badge{font-size:8px;font-weight:800;text-transform:uppercase;background:rgba(122,24,24,.15);color:var(--accent3);padding:1px 5px;border-radius:3px;border:1px solid rgba(122,24,24,.2)}
+.msg-t{font-size:10px;color:var(--text3);margin-left:auto}
+.msg-txt{font-size:13px;color:var(--text2);line-height:1.55;font-family:var(--font-my)}
+.msg-txt.ed{color:var(--text)}
+.chat-bottom{padding-top:.875rem;border-top:1px solid var(--border)}
+.chat-un-row{display:flex;align-items:center;gap:7px;margin-bottom:7px}
+.chat-un-label{font-size:11px;color:var(--text3);flex-shrink:0;font-family:var(--font-my)}
+.chat-row{display:flex;gap:7px}
+.chat-fi{flex:1;padding:10px 13px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:var(--font-my)}
+.chat-fi:focus{outline:none;border-color:var(--accent)}
+.chat-send{padding:10px 18px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font-my);white-space:nowrap}
+.chat-send:hover{background:var(--accent2)}
+.lb-hero{background:linear-gradient(135deg,rgba(122,24,24,.12),rgba(155,32,32,.06));border:1px solid rgba(122,24,24,.2);border-radius:10px;padding:1.25rem;margin-bottom:1.25rem;text-align:center}
+.lb-hero-title{font-family:var(--font-display);font-size:28px;letter-spacing:.1em;color:var(--text)}
+.lb-hero-sub{font-size:11px;color:var(--text3);font-family:var(--font-ui);letter-spacing:.06em;margin-top:2px}
+.lb-row{display:flex;align-items:center;gap:12px;padding:11px 12px;margin-bottom:6px;background:var(--bg2);border:1px solid var(--border);border-radius:8px}
+.lb-row.top{border-color:rgba(232,168,48,.25);background:rgba(232,168,48,.04)}
+.lb-rk{width:28px;text-align:center;font-family:var(--font-display);font-size:18px;color:var(--text3);flex-shrink:0}
+.lb-rk.g{color:var(--gold)}.lb-rk.sv{color:#aaa;font-size:16px}.lb-rk.br{color:#c08040;font-size:15px}
+.lb-info{flex:1;min-width:0}
+.lb-name{font-size:14px;font-weight:700;color:var(--text);font-family:var(--font-ui);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb-tier{font-size:10px;color:var(--text3);margin-top:1px}
+.lb-pts{font-family:var(--font-display);font-size:20px;color:var(--gold);flex-shrink:0}
+.ed-sec{margin-bottom:1.5rem}
+.ed-title{font-family:var(--font-display);font-size:12px;letter-spacing:.14em;color:var(--text3);text-transform:uppercase;margin-bottom:.75rem;padding-bottom:7px;border-bottom:1px solid var(--border)}
+.pw-gate{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.5rem}
+.pw-title{font-family:var(--font-display);font-size:16px;letter-spacing:.08em;color:var(--text2);margin-bottom:1rem}
+.cref{background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:.875rem}
+.cref-title{font-size:10px;font-weight:700;color:var(--accent3);letter-spacing:.08em;text-transform:uppercase;font-family:var(--font-ui);margin-bottom:4px}
+.cref-body{font-size:13px;color:var(--text2);font-family:var(--font-my);line-height:1.5}
+.empty{text-align:center;padding:3rem 1rem;color:var(--text3)}
+.ei{font-size:36px;margin-bottom:12px}
+.empty strong{display:block;font-size:14px;color:var(--text2);margin-bottom:5px;font-family:var(--font-my)}
+.empty p{font-size:12px;color:var(--text3);font-family:var(--font-my);line-height:1.6}
+.install-banner{position:fixed;bottom:70px;left:12px;right:12px;z-index:200;background:var(--bg2);border:1px solid var(--accent);border-radius:12px;padding:12px 16px;display:none;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,.6)}
+.install-banner.show{display:flex}
+.syncing{position:fixed;top:64px;right:12px;z-index:999;font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:4px;background:rgba(34,197,94,.08);color:var(--green);border:1px solid rgba(34,197,94,.18);opacity:0;transition:opacity .3s;pointer-events:none;font-family:var(--font-display)}
+.syncing.show{opacity:1}
+.hint{font-size:10px;color:var(--text3);text-align:center;padding:.75rem 0 0;font-family:var(--font-ui)}
+</style>
+</head>
+<body>
+<div class="vpn-banner" id="vpnBanner">
+  <span>⚠️</span>
+  <span>မြန်မာပြည်ထဲကနေ သုံးတဲ့သူတွေ — <strong>VPN ဖွင့်ထားပါ</strong> (Psiphon / Lantern)</span>
+  <button class="vpn-x" onclick="dismissVPN()">✕</button>
+</div>
+<header class="header">
+  <div class="logo-wrap">
+    <div class="logo-mark">N</div>
+    <div class="logo-text">
+      <div class="logo-title">TNV FACT ARENA</div>
+      <div class="logo-sub">The Nation Voice Myanmar</div>
+    </div>
+  </div>
+  <div class="live-indicator">
+    <div class="dot" id="liveDot"></div>
+    <span class="live-text" id="liveStatus">CONNECT</span>
+  </div>
+</header>
+
+<div class="view active" id="view-challenge">
+  <div class="max">
+    <div class="warn-sm">⚠️ ဒီ platform မှာ <strong>fact-check သာလုပ်ပါ။</strong> မြေပြင်သတင်း၊ ကိုယ်ရေးကိုယ်တာ အချက်အလက်တွေ မတင်ပါနဲ့။</div>
+    <div class="htog-row">
+      <button class="htog active" onclick="setHist(false,this)">လက်ရှိ Challenge</button>
+      <button class="htog" onclick="setHist(true,this)">မှတ်တမ်း</button>
+    </div>
+    <div id="challengeDisplay"></div>
+    <div id="verifiedPreview"></div>
+    <p class="hint">10s တစ်ကြိမ် sync</p>
+  </div>
+</div>
+
+<div class="view" id="view-submit">
+  <div class="max">
+    <div id="submitAlert"></div>
+    <div class="warn"><strong>⚠️ အမည်အစစ် မသုံးပါနဲ့</strong>မြန်မာပြည်ကနေ ပါဝင်တဲ့သူတွေ — Alias တစ်ခုသာ သုံးပါ</div>
+    <div id="submitRef"></div>
+    <div class="fg">
+      <label class="fl">သင့်အမည် (Alias)</label>
+      <input class="fi" type="text" id="usernameInput" placeholder="bird_77" maxlength="30">
+      <div class="un-hint">အမှန်တကယ်နာမည် မဖြစ်ရဘူး</div>
+      <div class="un-suggest" id="unSuggest"></div>
+    </div>
+    <div class="fg">
+      <label class="fl">သင်ရှာတွေ့တဲ့ အကြောင်းအရာ</label>
+      <textarea class="fta" id="evidenceInput" placeholder="ဥပမာ:&#10;- ဒီ claim မှန်တယ် / မမှန်ဘူး ဆိုတာ ဘာကြောင့်...&#10;- Source: https://..."></textarea>
+    </div>
+    <button class="btn" id="submitBtn" onclick="doSubmit()">အဖြေတင်မည်</button>
+  </div>
+</div>
+
+<div class="view" id="view-report">
+  <div class="max">
+    <div id="reportAlert"></div>
+    <div class="warn-sm">⚠️ <strong>ကိုယ်ရေးကိုယ်တာ ဖော်ပြမှု မပါပါစေနဲ့။</strong> VPN ဖွင့်ထားပါ။ ပုံ/ဗီဒီယိုတွင် location data ပါနိုင်တယ်။</div>
+    <div class="report-card">
+      <div class="report-card-title">📰 REPORTER SUBMISSION</div>
+      <div class="fg"><label class="fl">သတင်းခေါင်းစဉ်</label><input class="fi" type="text" id="repTitle" placeholder="ဥပမာ: မကွေး မြို့နယ် တွင် ..."></div>
+      <div class="fg"><label class="fl">တည်နေရာ (optional)</label><input class="fi" type="text" id="repLocation" placeholder="ဥပမာ: မကွေး မြို့နယ်, စစ်ကိုင်းတိုင်း"></div>
+      <div class="fg"><label class="fl">သတင်းအကြောင်းအရာ</label><textarea class="fta" style="min-height:140px" id="repBody" placeholder="သင်မြင်ကြုံတွေ့ရှိသမျှ အသေးစိတ်ရေးပါ...&#10;&#10;- ဘာဖြစ်ခဲ့သလဲ?&#10;- ဘယ်အချိန်မှာ?&#10;- သက်သေ/အရင်းအမြစ်?"></textarea></div>
+    </div>
+    <button class="btn" id="reportBtn" onclick="doReport()">သတင်းတင်မည်</button>
+    
+  </div>
+</div>
+
+<div class="view" id="view-chat">
+  <div class="max">
+    <div class="warn-sm">⚠️ <strong>မြေပြင်သတင်း၊ ကိုယ်ရေးကိုယ်တာ အချက်အလက်တွေ မတင်ပါနဲ့</strong></div>
+    <div class="chat-wrap">
+      <div class="chat-msgs" id="chatMsgs"><div class="empty"><div class="ei">💬</div><strong>Chat ဗလာနေသေးတယ်</strong><p>ပထမဆုံး message ပို့ပါ</p></div></div>
+      <div class="chat-bottom">
+        <div class="chat-un-row">
+          <span class="chat-un-label">အမည်:</span>
+          <input class="fi" style="flex:1;padding:7px 10px;font-size:13px" type="text" id="chatUsername" placeholder="alias တစ်ခု..." maxlength="30">
+        </div>
+        <div class="chat-row">
+          <input class="chat-fi" type="text" id="chatInput" placeholder="Message ရေးပါ..." maxlength="400" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();doChat()}">
+          <button class="chat-send" onclick="doChat()">ပို့</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="view" id="view-board">
+  <div class="max">
+    <div class="lb-hero"><div class="lb-hero-title">LEADERBOARD</div><div class="lb-hero-sub">TNV FACT ARENA — TOP VERIFIERS</div></div>
+    <div id="lbList"></div>
+    <p class="hint">Points ရမှ ဒီမှာပေါ်လာမယ်</p>
+  </div>
+</div>
+
+<div class="view" id="view-training">
+  <div class="max">
+
+    <!-- MODULE SELECTOR -->
+    <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:1.25rem;scrollbar-width:none">
+      <button class="un-chip active" id="mod0" onclick="showModule(0,this)" style="white-space:nowrap;flex-shrink:0">📰 သတင်းရေးနည်း</button>
+      <button class="un-chip" id="mod1" onclick="showModule(1,this)" style="white-space:nowrap;flex-shrink:0">🔍 Fact-Check</button>
+      <button class="un-chip" id="mod2" onclick="showModule(2,this)" style="white-space:nowrap;flex-shrink:0">🔐 ဒစ်ဂျစ်တယ်လုံခြုံရေး</button>
+      <button class="un-chip" id="mod3" onclick="showModule(3,this)" style="white-space:nowrap;flex-shrink:0">📷 အကောင်းဆုံးနည်း</button>
+    </div>
+
+    <div id="trainingContent"></div>
+
+  </div>
+</div>
+
+<div class="view" id="view-editor">
+  <div class="max">
+    <div id="editorAlert"></div>
+    <div id="editorLogin">
+      <div class="pw-gate">
+        <div class="pw-title">EDITOR LOGIN</div>
+        <div class="fg"><label class="fl">Password</label><input class="fi" type="password" id="editorPw" onkeydown="if(event.key==='Enter')doEdLogin()"></div>
+        <button class="btn" onclick="doEdLogin()">ဝင်မည်</button>
+      </div>
+    </div>
+    <div id="editorPanel" style="display:none">
+      <div class="ed-sec">
+        <div class="ed-title">Challenge အသစ်တင်မည်</div>
+        <div class="fg"><label class="fl">အမျိုးအစား</label>
+          <select class="fse" id="cType">
+            <option value="Claim">Claim — မှန်/မမှန် စစ်မည်</option>
+            <option value="Image">Image — မူရင်း source ရှာမည်</option>
+            <option value="Location">Location — တည်နေရာ အတည်ပြုမည်</option>
+            <option value="Video">Video — စစ်မှန်မှု စစ်ဆေးမည်</option>
+          </select>
+        </div>
+        <div class="fg"><label class="fl">ခေါင်းစဉ်</label><input class="fi" type="text" id="cTitle" placeholder="Challenge ခေါင်းစဉ်..."></div>
+        <div class="fg"><label class="fl">အသေးစိတ်</label><textarea class="fta" id="cContent" placeholder="Challenge အသေးစိတ်..."></textarea></div>
+        <div class="row2"><button class="btn" onclick="doPost()">တင်မည်</button><button class="btn-sm" onclick="doClose()">Session ပိတ်</button></div>
+      </div>
+      <div class="ed-sec">
+        <div class="ed-title">Submissions <span id="subCountLabel"></span></div>
+        <div id="editorSubs"><div style="font-size:13px;color:var(--text3);font-family:var(--font-my)">Submissions မရှိသေးပါ</div></div>
+      </div>
+      <div class="ed-sec">
+        <div class="ed-title">ယခင် Challenges</div>
+        <div id="pastChallenges"><div style="font-size:13px;color:var(--text3);font-family:var(--font-my)">မရှိသေးပါ</div></div>
+      </div>
+      <div class="ed-sec">
+        <div class="ed-title">Reporter Accounts <span id="repAccLabel"></span></div>
+        <div class="fg" style="display:flex;gap:8px;flex-wrap:wrap">
+          <input class="fi" style="flex:1;min-width:120px" type="text" id="newRepUser" placeholder="username">
+          <input class="fi" style="flex:1;min-width:120px" type="text" id="newRepPass" placeholder="password">
+          <button class="btn" style="flex:none;padding:11px 14px;font-size:13px" onclick="doAddReporter()">ထည့်</button>
+        </div>
+        <div style="display:flex;gap:6px;margin-bottom:.75rem">
+          <button class="htog active" id="accTabPending" onclick="switchAccTab('pending',this)">အတည်ပြုဆဲ</button>
+          <button class="htog" id="accTabApproved" onclick="switchAccTab('approved',this)">အတည်ပြုပြီး</button>
+        </div>
+        <div id="repAccList"><div style="font-size:13px;color:var(--text3);font-family:var(--font-my)">Reporters မရှိသေးပါ</div></div>
+      </div>
+      <div class="ed-sec">
+        <div class="ed-title">Reporter Submissions <span id="repCountLabel"></span></div>
+        <div id="editorReports"><div style="font-size:13px;color:var(--text3);font-family:var(--font-my)">Reports မရှိသေးပါ</div></div>
+      </div>
+      <div class="ed-sec">
+        <div class="ed-title">Reset</div>
+        <div class="row2" style="max-width:260px">
+          <button class="btn-danger" onclick="doResetAll()">Data ဖျက်</button>
+          <button class="btn-danger" onclick="doClearChat()">Chat ဖျက်</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen" style="display:none;position:fixed;inset:0;z-index:500;background:var(--bg);padding:2rem;overflow-y:auto">
+  <div style="width:100%;max-width:360px;margin:0 auto">
+    <div style="text-align:center;margin-bottom:2rem">
+      <div style="width:56px;height:56px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:34px;color:#fff;clip-path:polygon(0 0,100% 0,100% 75%,75% 100%,0 100%);margin:0 auto 1rem">N</div>
+      <div style="font-family:var(--font-display);font-size:22px;letter-spacing:.1em;color:var(--text)">TNV FACT ARENA</div>
+      <div style="font-size:10px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-top:4px">The Nation Voice Myanmar</div>
+    </div>
+
+    <!-- LOGIN / REGISTER TABS -->
+    <div style="display:flex;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:1.25rem">
+      <button id="tabLogin" onclick="switchAuthTab('login')" style="flex:1;padding:9px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:var(--accent);color:#fff;font-family:var(--font-my)">Login</button>
+      <button id="tabRegister" onclick="switchAuthTab('register')" style="flex:1;padding:9px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:none;color:var(--text3);font-family:var(--font-my)">Register</button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div id="loginForm">
+      <div id="loginAlert"></div>
+      <div class="fg"><label class="fl">Username</label><input class="fi" type="text" id="loginUsername" placeholder="reporter_username" maxlength="30"></div>
+      <div class="fg"><label class="fl">Password</label><input class="fi" type="password" id="loginPassword" placeholder="••••••••"></div>
+      <button class="btn" onclick="doLogin()" id="loginBtn">Login</button>
+      <div style="margin-top:.875rem;padding-top:.875rem;border-top:1px solid var(--border);text-align:center">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:6px;font-family:var(--font-my)">Editor ဆိုရင်</div>
+        <button onclick="switchAuthTab('editor')" style="background:none;border:1px solid var(--border2);border-radius:6px;padding:7px 16px;color:var(--text2);font-size:12px;cursor:pointer;font-family:var(--font-my)">🔐 Editor Login</button>
+      </div>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div id="registerForm" style="display:none">
+      <div id="registerAlert"></div>
+      <div class="fg"><label class="fl">Username (alias)</label><input class="fi" type="text" id="regName" placeholder="ဥပမာ: reporter_mw" maxlength="30"></div>
+      <div class="fg"><label class="fl">Password (အနည်းဆုံး ၆ လုံး)</label><input class="fi" type="password" id="regPass" placeholder="••••••••"></div>
+      <div class="fg"><label class="fl">မိတ်ဆက် (optional)</label><input class="fi" type="text" id="regNote" placeholder="ဥပမာ: မကွေးမြို့နယ် reporter"></div>
+      <button class="btn" onclick="doRegister()" id="registerBtn">Register လုပ်မည်</button>
+      <p style="font-size:11px;color:var(--text3);text-align:center;margin-top:8px;font-family:var(--font-my)">Register ပြီးရင် Editor အတည်ပြုမှ login ဝင်လို့ရမယ်</p>
+    </div>
+
+    <!-- EDITOR LOGIN FORM -->
+    <div id="editorLoginForm" style="display:none">
+      <div id="editorLoginAlert"></div>
+      <div class="fg"><label class="fl">Editor Password</label><input class="fi" type="password" id="editorLoginPw" placeholder="••••••••"></div>
+      <button class="btn" onclick="doEditorDirectLogin()" id="editorLoginBtn">Editor အဖြစ် ဝင်မည်</button>
+    </div>
+  </div>
+</div>
+
+<nav class="bottom-nav">
+  <button class="tab active" onclick="sw(this,'challenge')"><span class="tab-icon">📡</span>ဆွေးနွေးရန်</button>
+  <button class="tab" onclick="sw(this,'submit')"><span class="tab-icon">✍️</span>ဆွေးနွေးရေး</button>
+  <button class="tab" onclick="sw(this,'report')"><span class="tab-icon">📰</span>သတင်းပို့</button>
+  <button class="tab" onclick="sw(this,'chat')"><span class="tab-icon">💬</span>Chat</button>
+  <button class="tab" onclick="sw(this,'board')"><span class="tab-icon">🏆</span>ရမှတ်</button>
+  <button class="tab" onclick="sw(this,'training')"><span class="tab-icon">📚</span>သင်ခန်း</button>
+  <button class="tab" onclick="sw(this,'editor')"><span class="tab-icon">🔐</span>Editor</button>
+</nav>
+
+<div class="install-banner" id="installBanner">
+  <div style="flex:1"><div style="font-size:13px;font-weight:700;color:var(--text);font-family:var(--font-my)">App အနေနဲ့ install လုပ်မည်</div><div style="font-size:11px;color:var(--text3);margin-top:2px;font-family:var(--font-my)">Home screen မှာ ထည့်မယ်</div></div>
+  <button onclick="doInstall()" style="padding:8px 16px;background:var(--accent);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font-my)">Install</button>
+  <button onclick="document.getElementById('installBanner').classList.remove('show')" style="padding:6px;background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer">✕</button>
+</div>
+<div class="syncing" id="syncBadge">SYNC</div>
+
+<script>
+const DB='https://tnv-fact-arena-default-rtdb.firebaseio.com';
+const PASS='TNVEditor2026';
+
+const ALIASES=['bird_77','river_44','cloud_21','star_09','wind_33','moon_15','tree_88','fish_62','hill_50','rain_37','leaf_29','rock_41','dust_18','flame_55','wave_66'];
+let isEd=false,activeTab='challenge',showHist=false,lastChatTs=0;
+const fb={
+  async get(p){try{const r=await fetch(`${DB}/${p}.json`,{cache:'no-store'});return r.ok?await r.json():null}catch{return null}},
+  async set(p,d){try{const r=await fetch(`${DB}/${p}.json`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});return r.ok}catch{return false}},
+  async patch(p,d){try{const r=await fetch(`${DB}/${p}.json`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});return r.ok}catch{return false}},
+  async push(p,d){try{const r=await fetch(`${DB}/${p}.json`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});if(!r.ok)return null;return(await r.json()).name}catch{return null}},
+  async del(p){try{await fetch(`${DB}/${p}.json`,{method:'DELETE'})}catch{}}
+};
+function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function toArr(o){if(!o)return[];return Object.entries(o).map(([id,v])=>({...v,_id:id}))}
+function ago(ts){if(!ts)return'';const d=Date.now()-ts;if(d<60000)return'ခုနက';if(d<3600000)return Math.floor(d/60000)+'မိနစ်';if(d<86400000)return Math.floor(d/3600000)+'နာရီ';return new Date(ts).toLocaleDateString('my-MM')}
+function tier(p){if(p>=5000)return'⭐ Master Verifier';if(p>=2000)return'🔍 Senior Investigator';if(p>=500)return'📰 Field Correspondent';return'🌱 Rookie Reporter'}
+function init(n){if(!n)return'?';const w=n.trim().split(/\s+/);return(w.length>1?w[0][0]+w[w.length-1][0]:n.substring(0,2)).toUpperCase()}
+function showAl(id,type,msg,ms=5000){const el=document.getElementById(id);if(!el)return;el.innerHTML=`<div class="al al-${type}">${msg}</div>`;if(ms>0)setTimeout(()=>el.innerHTML='',ms)}
+function sync(){const el=document.getElementById('syncBadge');el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1200)}
+function dismissVPN(){document.getElementById('vpnBanner').style.display='none';localStorage.setItem('tnv_vpn_ok','1')}
+if(localStorage.getItem('tnv_vpn_ok'))document.getElementById('vpnBanner').style.display='none';
+function renderSuggestions(){const s=ALIASES.sort(()=>Math.random()-.5).slice(0,5);document.getElementById('unSuggest').innerHTML=s.map(a=>`<span class="un-chip" onclick="pickAlias('${a}')">${a}</span>`).join('')}
+function pickAlias(a){document.getElementById('usernameInput').value=a;document.getElementById('chatUsername').value=a;localStorage.setItem('tnv_un',a);localStorage.setItem('tnv_chat_un',a)}
+function sw(btn,tab){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));btn.classList.add('active');document.getElementById('view-'+tab).classList.add('active');activeTab=tab;if(tab==='challenge')renderChallenge();if(tab==='submit')updateRef();if(tab==='chat')renderChat();if(tab==='board')renderLB();if(tab==='editor'&&isEd){loadEdSubs();loadPast();loadReports();loadRepAccounts()}
+  if(tab==='training'){renderLesson()}}
+function setHist(h,btn){showHist=h;document.querySelectorAll('.htog').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderChallenge()}
+
+
+async function renderChallenge(){
+  sync();
+  const[chData,subsObj]=await Promise.all([fb.get('challenges'),fb.get('submissions')]);
+  const el=document.getElementById('challengeDisplay'),pre=document.getElementById('verifiedPreview');
+  const dot=document.getElementById('liveDot'),stat=document.getElementById('liveStatus');
+  const subs=toArr(subsObj);
+  if(!chData){el.innerHTML=`<div class="empty"><div class="ei">📡</div><strong>Challenge မရှိသေးပါ</strong><p>Editor က challenge ပို့ပြီးမှ ဒီမှာပေါ်လာမယ်</p></div>`;dot.className='dot';stat.textContent='WAIT';pre.innerHTML='';return}
+  const all=toArr(chData).sort((a,b)=>b.postedAt-a.postedAt);const live=all.find(c=>c.status==='active');
+  if(showHist){dot.className='dot';stat.textContent='ARCHIVE';const closed=all.filter(c=>c.status==='closed');if(!closed.length){el.innerHTML=`<div class="empty"><div class="ei">📋</div><strong>ယခင် challenges မရှိသေးပါ</strong></div>`;pre.innerHTML='';return}el.innerHTML=`<div class="sec-label">ပြီးဆုံးပြီးသော challenges</div>`+closed.map(ch=>{const cs=subs.filter(s=>s.challengeId===ch._id);const top=cs.filter(s=>s.points>0).sort((a,b)=>b.points-a.points)[0];return`<div class="ccard closed"><div class="ccard-top"><span class="ctype old">ပြီးဆုံး · ${esc(ch.type)}</span></div><p class="ctitle">${esc(ch.title)}</p><div class="cmeta"><span>📅 ${ago(ch.postedAt)}</span><span>👥 ${cs.length}</span>${top?`<span style="color:var(--gold)">🏆 ${esc(top.username)}</span>`:''}</div></div>`}).join('');pre.innerHTML='';return}
+  if(!live){el.innerHTML=`<div class="empty"><div class="ei">📡</div><strong>လက်ရှိ challenge မရှိပါ</strong><p>Session ပိတ်ထားသည်</p></div>`;dot.className='dot';stat.textContent='CLOSED';pre.innerHTML='';return}
+  const ls=subs.filter(s=>s.challengeId===live._id);const vf=ls.filter(s=>s.points>0).sort((a,b)=>b.points-a.points);
+  el.innerHTML=`<div class="ccard"><div class="ccard-top"><span class="ctype">${esc(live.type)}</span><span class="live-pill">LIVE</span></div><p class="ctitle">${esc(live.title)}</p><p class="ccontent">${esc(live.content)}</p><div class="cmeta"><span>🕐 ${ago(live.postedAt)}</span><span>👥 ${ls.length}</span>${vf.length?`<span style="color:var(--green)">✓ ${vf.length}</span>`:''}</div></div>`;
+  dot.className='dot on';stat.className='live-text on';stat.textContent='LIVE';
+  if(vf.length){pre.innerHTML=`<div class="sec-label">Top Submissions</div>`+vf.slice(0,3).map(s=>`<div class="scard"><div class="shead"><span class="suser">${esc(s.username)}</span><span class="pts-badge">+${s.points}PTS</span></div><div class="scontent" style="margin-top:4px">${esc(s.content.substring(0,150))}${s.content.length>150?'...':''}</div></div>`).join('')}else{pre.innerHTML=''}
+}
+async function updateRef(){const chData=await fb.get('challenges');const el=document.getElementById('submitRef');if(!chData){el.innerHTML=`<div class="al al-w">Active challenge မရှိပါ</div>`;return}const live=toArr(chData).find(c=>c.status==='active');if(live){el.innerHTML=`<div class="cref"><div class="cref-title">Current Challenge</div><div class="cref-body">${esc(live.title)}</div></div>`}else{el.innerHTML=`<div class="al al-w">Active challenge မရှိပါ</div>`}}
+async function doSubmit(){const btn=document.getElementById('submitBtn');const un=document.getElementById('usernameInput').value.trim();const ev=document.getElementById('evidenceInput').value.trim();if(!un){showAl('submitAlert','e','အမည်ထည့်ပါ');return}if(ev.length<10){showAl('submitAlert','e','အကြောင်းအရာ ပိုအသေးစိတ်ရေးပါ');return}if(/^[\u1000-\u109F\s]{4,}$/.test(un)){if(!confirm('အမည်စစ်စစ်ဖြစ်နေပုံရတယ်။ Alias သုံးဖို့ အကြံပြုတယ်။ ဆက်တင်မှာလား?'))return}btn.disabled=true;btn.textContent='တင်နေသည်...';const chData=await fb.get('challenges');const live=chData?toArr(chData).find(c=>c.status==='active'):null;if(!live){showAl('submitAlert','e','Active challenge မရှိပါ');btn.disabled=false;btn.textContent='အဖြေတင်မည်';return}const subsObj=await fb.get('submissions');if(toArr(subsObj).find(s=>s.username===un&&s.challengeId===live._id)){showAl('submitAlert','e',`"${un}" က တစ်ကြိမ်တင်ပြီးပြီ`);btn.disabled=false;btn.textContent='အဖြေတင်မည်';return}const key=await fb.push('submissions',{challengeId:live._id,username:un,content:ev,timestamp:Date.now(),points:0});if(key){localStorage.setItem('tnv_un',un);document.getElementById('evidenceInput').value='';showAl('submitAlert','s','တင်ပြီးပါပြီ ✓  Editor review ကို စောင့်ပါ');sync()}else{showAl('submitAlert','e','Error — network စစ်ကြည့်ပြီး ထပ်ကြိုးစားပါ')}btn.disabled=false;btn.textContent='အဖြေတင်မည်'}
+async function renderChat(){sync();const msgs=await fb.get('chat');const el=document.getElementById('chatMsgs');if(!msgs){el.innerHTML=`<div class="empty"><div class="ei">💬</div><strong>Chat ဗလာနေသေးတယ်</strong><p>ပထမဆုံး message ပို့ပါ</p></div>`;return}const arr=toArr(msgs).sort((a,b)=>a.timestamp-b.timestamp);const latest=arr[arr.length-1]?.timestamp||0;if(latest<=lastChatTs&&el.children.length>1)return;lastChatTs=latest;el.innerHTML=arr.map(m=>`<div class="msg"><div class="msg-av ${m.isEd?'ed':''}">${esc(init(m.username))}</div><div class="msg-body"><div class="msg-meta"><span class="msg-un ${m.isEd?'ed':''}">${esc(m.username)}</span>${m.isEd?'<span class="msg-badge">EDITOR</span>':''}<span class="msg-t">${ago(m.timestamp)}</span></div><div class="msg-txt ${m.isEd?'ed':''}">${esc(m.message)}</div></div></div>`).join('');el.scrollTop=el.scrollHeight}
+async function doChat(){const un=document.getElementById('chatUsername').value.trim();const msg=document.getElementById('chatInput').value.trim();if(!un){alert('အမည်ထည့်ပါ');return}if(!msg)return;document.getElementById('chatInput').value='';localStorage.setItem('tnv_chat_un',un);await fb.push('chat',{username:un,message:msg,timestamp:Date.now(),isEd});lastChatTs=0;renderChat()}
+async function renderLB(){sync();const lb=await fb.get('leaderboard');const el=document.getElementById('lbList');const entries=lb?Object.entries(lb).filter(([,p])=>p>0).sort((a,b)=>b[1]-a[1]):[];if(!entries.length){el.innerHTML=`<div class="empty"><div class="ei">🏆</div><strong>အဆင့်မှတ်တမ်း မရှိသေးပါ</strong><p>ပထမ points ရတဲ့သူ ဒီမှာပေါ်လာမယ်</p></div>`;return}const cls=i=>i===0?'g':i===1?'sv':i===2?'br':'';const rk=i=>i===0?'①':i===1?'②':i===2?'③':i+1;el.innerHTML=entries.map(([n,p],i)=>`<div class="lb-row ${i<3?'top':''}"><span class="lb-rk ${cls(i)}">${rk(i)}</span><div class="lb-info"><div class="lb-name">${esc(n)}</div><div class="lb-tier">${tier(p)}</div></div><span class="lb-pts">${p}</span></div>`).join('')}
+function doEdLogin(){if(document.getElementById('editorPw').value===PASS){isEd=true;document.getElementById('editorLogin').style.display='none';document.getElementById('editorPanel').style.display='block';loadEdSubs();loadPast();loadReports();loadRepAccounts()}else{showAl('editorAlert','e','Password မမှန်ပါ');document.getElementById('editorPw').value=''}}
+async function doPost(){const title=document.getElementById('cTitle').value.trim();const content=document.getElementById('cContent').value.trim();const type=document.getElementById('cType').value;if(!title||!content){showAl('editorAlert','e','ခေါင်းစဉ်နှင့် အသေးစိတ် ထည့်ပါ');return}const id=Date.now().toString();if(await fb.set(`challenges/${id}`,{id,title,content,type,status:'active',postedAt:Date.now()})){document.getElementById('cTitle').value='';document.getElementById('cContent').value='';showAl('editorAlert','s','Challenge တင်ပြီးပါပြီ ✓');loadEdSubs();loadPast();loadReports();loadRepAccounts()}else{showAl('editorAlert','e','Error')}}
+async function doClose(){const chData=await fb.get('challenges');const live=chData?toArr(chData).find(c=>c.status==='active'):null;if(!live){showAl('editorAlert','w','Active challenge မရှိပါ');return}await fb.patch(`challenges/${live._id}`,{status:'closed'});showAl('editorAlert','s','Session ပိတ်ပြီးပါပြီ');loadPast()}
+async function loadEdSubs(){sync();const[chData,subsObj]=await Promise.all([fb.get('challenges'),fb.get('submissions')]);const el=document.getElementById('editorSubs'),badge=document.getElementById('subCountLabel');const live=chData?toArr(chData).find(c=>c.status==='active'):null;const subs=toArr(subsObj).filter(s=>live&&s.challengeId===live._id).sort((a,b)=>b.timestamp-a.timestamp);badge.textContent=subs.length?`(${subs.length})`:'';if(!subs.length){el.innerHTML=`<div style="font-size:13px;color:var(--text3);font-family:var(--font-my)">${live?'Submissions မရှိသေးပါ':'Active challenge မရှိပါ'}</div>`;return}el.innerHTML=subs.map(s=>`<div class="scard"><div class="shead"><span class="suser">${esc(s.username)}</span><span class="stime">${ago(s.timestamp)}</span></div><div class="scontent" style="margin:5px 0 8px">${esc(s.content)}</div><div class="award-row"><input class="pts-input" type="number" id="pts_${esc(s._id)}" min="0" max="200" placeholder="pts" value="${s.points||''}"><button class="btn-award" onclick="doAward('${esc(s._id)}','${esc(s.username)}',${s.points||0})">Points ပေးမည်</button>${s.points>0?`<span class="ver-mark">✓ ${s.points}pts</span>`:''}</div></div>`).join('')}
+async function loadPast(){const chData=await fb.get('challenges');const el=document.getElementById('pastChallenges');if(!chData){el.innerHTML=`<div style="font-size:13px;color:var(--text3)">မရှိသေးပါ</div>`;return}const closed=toArr(chData).filter(c=>c.status==='closed').sort((a,b)=>b.postedAt-a.postedAt);if(!closed.length){el.innerHTML=`<div style="font-size:13px;color:var(--text3)">မရှိသေးပါ</div>`;return}const subsObj=await fb.get('submissions');const subs=toArr(subsObj);el.innerHTML=closed.map(ch=>{const cs=subs.filter(s=>s.challengeId===ch._id);const top=cs.filter(s=>s.points>0).sort((a,b)=>b.points-a.points)[0];return`<div class="scard" style="margin-bottom:.5rem"><div class="shead"><span class="suser" style="font-size:12px">${esc(ch.title.substring(0,45))}${ch.title.length>45?'...':''}</span><span class="stime">${ago(ch.postedAt)}</span></div><div style="font-size:11px;color:var(--text3);margin-top:3px">တင်သူ: ${cs.length} ${top?`· 🏆 ${esc(top.username)} (${top.points}pts)`:''}</div></div>`}).join('')}
+async function doAward(fbKey,username,oldPts){const ptsEl=document.getElementById('pts_'+fbKey);if(!ptsEl)return;const pts=parseInt(ptsEl.value)||0;await fb.patch(`submissions/${fbKey}`,{points:pts});const lb=await fb.get('leaderboard')||{};lb[username]=Math.max(0,(lb[username]||0)-oldPts+pts);await fb.set('leaderboard',lb);showAl('editorAlert','s',`${username} ကို ${pts}pts ပေးပြီးပါပြီ ✓`);loadEdSubs()}
+async function doResetAll(){if(!confirm('Data အားလုံး ဖျက်မှာ သေချာလား?'))return;await Promise.all([fb.del('challenges'),fb.del('submissions'),fb.del('leaderboard')]);showAl('editorAlert','s','Reset ပြီးပါပြီ');loadEdSubs();loadPast();loadReports();loadRepAccounts()}
+async function doClearChat(){if(!confirm('Chat messages အားလုံး ဖျက်မှာ သေချာလား?'))return;await fb.del('chat');lastChatTs=0;showAl('editorAlert','s','Chat ဖျက်ပြီးပါပြီ');renderChat()}
+
+
+// ── TRAINING MODULES ──────────────────────────────────────────────
+const MODULES = [
+  {
+    title: "📰 အခြေခံသတင်းရေးနည်း",
+    lessons: [
+      {
+        title: "5W1H နည်းလမ်း",
+        icon: "❓",
+        body: `သတင်းတစ်ပုဒ်ကောင်းဖို့ မေးခွန်း ၆ ခုဖြေရသည်—
+
+<b>Who</b> — ဘယ်သူနဲ့ ဆိုင်သလဲ?
+<b>What</b> — ဘာဖြစ်ခဲ့သလဲ?
+<b>When</b> — ဘယ်အချိန်မှာ?
+<b>Where</b> — ဘယ်နေရာမှာ?
+<b>Why</b> — ဘာကြောင့်ဖြစ်သလဲ?
+<b>How</b> — ဘယ်လိုဖြစ်ခဲ့သလဲ?
+
+ဒီ မေးခွန်း ၆ ခုအားလုံး ဖြေနိုင်မှသာ သတင်းပြည့်စုံသည်ဟု ဆိုနိုင်သည်။`,
+        quiz: {q:"5W1H မှာ W ဘယ်နှစ်ခုရှိသလဲ?", opts:["3","4","5","6"], ans:2}
+      },
+      {
+        title: "Inverted Pyramid ပုံစံ",
+        icon: "🔺",
+        body: `သတင်းရေးတဲ့အခါ အရေးကြီးဆုံးအချက်ကို <b>အရင်ဆုံး</b> ရေးပါ။
+
+▼ <b>အပေါ်ဆုံး</b> — အရေးကြီးဆုံး သတင်းအချက်
+▼ <b>အလယ်</b> — ထောက်ကူသော အသေးစိတ်
+▼ <b>အောက်ဆုံး</b> — နောက်ခံသတင်း၊ ဆက်စပ်အချက်
+
+ဘာကြောင့်? — ဖတ်သူများ ပထမဆုံးပိုဒ်ကိုသာ ဖတ်တတ်ကြသောကြောင့်ဖြစ်သည်။ Editor များ နောက်ပိုင်းကို ဖြတ်တောက်တတ်သောကြောင့်လည်း ဖြစ်သည်။`,
+        quiz: {q:"Inverted Pyramid တွင် ဘာကို အပေါ်ဆုံးထားသနည်း?", opts:["နောက်ခံသတင်း","အရေးကြီးဆုံးအချက်","ကိုးကားချက်","Editor မှတ်ချက်"], ans:1}
+      },
+      {
+        title: "Source ခေါ်နည်း / အင်တာဗျူး",
+        icon: "🎤",
+        body: `<b>Source ကောင်းဆိုတာ</b> — ဖြစ်ပျက်မှုနှင့် တိုက်ရိုက်ဆက်နွှယ်သော သက်သေသာဓကပင်ဖြစ်သည်။
+
+<b>အင်တာဗျူးမတိုင်မီ</b>
+• မေးခွန်းများကို ကြိုတင်ပြင်ဆင်ပါ
+• Subject အကြောင်း ကြိုသိထားပါ
+
+<b>အင်တာဗျူးစဉ်</b>
+• Open questions မေးပါ ("ဘယ်လိုခံစားသလဲ?" မဟုတ်ဘဲ "ဘာဖြစ်ခဲ့သလဲ?")
+• Quote တိတိကျကျ မှတ်ပါ
+• ကြားဖြတ်မမေးနဲ့
+
+<b>Source အနည်းဆုံး ၂ ခု</b> cross-check မလုပ်မချင်း publish မလုပ်ပါနဲ့။`,
+        quiz: {q:"Source အနည်းဆုံး ဘယ်နှစ်ခု cross-check လုပ်သင့်သနည်း?", opts:["1","2","3","4"], ans:1}
+      },
+      {
+        title: "Headline ရေးနည်း",
+        icon: "✏️",
+        body: `<b>ကောင်းသော Headline</b>
+• တိုတောင်းပြတ်သားသည် (မူမြန်မာ: စာလုံး ၁၀-၁၅ ခုထက်မကျော်)
+• Verb ပါသည်
+• အရေးကြီးဆုံးအချက် ပါသည်
+• Clickbait မဟုတ်
+
+<b>ကောင်းသော Headline ဥပမာ</b>
+✓ "မကွေးတွင် စစ်တပ်ကျောင်းကို မီးရှို့"
+
+<b>မကောင်းသော Headline ဥပမာ</b>
+✗ "ဒါကြောင့်မလို့ ဒီမြို့မှာ ကြောက်စရာဖြစ်ခဲ့"
+✗ "သင်မယုံနိုင်တဲ့ အဖြစ်အပျက်"`,
+        quiz: {q:"ကောင်းသော headline တွင် ဘာပါသင့်သနည်း?", opts:["Clickbait","Verb","Question mark","Emoji"], ans:1}
+      }
+    ]
+  },
+  {
+    title: "🔍 Fact-Checking နည်းလမ်း",
+    lessons: [
+      {
+        title: "Fact-check ဘာလဲ?",
+        icon: "🔬",
+        body: `<b>Fact-checking</b> ဆိုတာ သတင်းအချက်အလက်တစ်ခုကို သက်သေဖြင့် အတည်ပြုသည့် လုပ်ငန်းစဉ်ဖြစ်သည်။
+
+<b>ဘာကို fact-check လုပ်ရမလဲ?</b>
+• Social media post တွင် ပျံ့နှံ့နေသော သတင်း
+• ပုံ / ဗီဒီယို
+• ကိန်းဂဏန်း / စာရင်းများ
+• Quote / ကိုးကားချက်
+
+<b>TNV Fact-check Standard</b>
+1. Field report ရယူ
+2. Source ၂ ခုနှင့် cross-reference
+3. Editor review
+4. Publish`,
+        quiz: {q:"TNV fact-check process တွင် ဘယ်ဟာပထမဦးဆုံးလဲ?", opts:["Editor review","Publish","Field report ရယူ","Source cross-reference"], ans:2}
+      },
+      {
+        title: "ဓာတ်ပုံ Verification",
+        icon: "🖼️",
+        body: `<b>Reverse Image Search သုံးနည်း</b>
+
+<b>Google Images</b>
+• images.google.com ဖွင့်
+• Camera icon နှိပ်
+• ပုံ upload သို့မဟုတ် URL ထည့်
+
+<b>TinEye</b> (tineye.com)
+• ပိုကောင်းသော ရလဒ်ရတတ်သည်
+
+<b>ဘာရှာမလဲ?</b>
+• ပုံ၏ မူလ date
+• မူလ location
+• Context — ဒီပုံ ဟိုအရင်တုန်းကလား?
+
+<b>EXIF Data</b>
+• ပုံ properties တွင် GPS, date, camera မှတ်တမ်း ရှိနိုင်သည်`,
+        quiz: {q:"Reverse image search အတွက် ဘာ tool သုံးနိုင်သနည်း?", opts:["Facebook","TinEye","YouTube","Twitter"], ans:1}
+      },
+      {
+        title: "Disinformation vs Misinformation",
+        icon: "⚠️",
+        body: `<b>Misinformation</b>
+• မမှန်ကန်သော သတင်း
+• ရည်ရွယ်ချက်မပါဘဲ ဖြန့်ဝေသည်
+• ဥပမာ — မှားယွင်းစွာ မျှဝေသော ဓာတ်ပုံ
+
+<b>Disinformation</b>
+• မမှန်ကန်သောသတင်း
+• ရည်ရွယ်ချက်ဖြင့် ဖန်တီးဖြန့်ဝေသည်
+• ဥပမာ — စစ်တပ်၏ propaganda
+
+<b>Malinformation</b>
+• မှန်ကန်သောသတင်းဖြစ်သော်လည်း ထိခိုက်နစ်နာစေရန် ဖြန့်ဝေသည်
+• ဥပမာ — Private ဓာတ်ပုံ ခွင့်မပါဘဲ ဖြန့်ဝေခြင်း
+
+မြန်မာ context တွင် SAC ၏ disinformation ကို သတိထားပါ။`,
+        quiz: {q:"ရည်ရွယ်ချက်ဖြင့် မှားယွင်းသောသတင်း ဖြန့်ဝေခြင်းကို ဘာဟုခေါ်သနည်း?", opts:["Misinformation","Malinformation","Disinformation","Propaganda"], ans:2}
+      }
+    ]
+  },
+  {
+    title: "🔐 ဒစ်ဂျစ်တယ်လုံခြုံရေး",
+    lessons: [
+      {
+        title: "VPN ဘာကြောင့်လိုသလဲ",
+        icon: "🛡️",
+        body: `မြန်မာပြည်တွင်းတွင် internet ကိုကြည့်သောအခါ ISP (Internet Service Provider) နှင့် စစ်တပ်က သင်ဘာကြည့်နေသည်ကို မြင်နိုင်သည်။
+
+<b>VPN က ဘာလုပ်သလဲ</b>
+• သင်၏ traffic ကို encrypt လုပ်သည်
+• သင်၏ IP address ကို ဝှက်သည်
+• Block ထားသော website များကိုဝင်ရောက်နိုင်သည်
+
+<b>မြန်မာပြည်တွင် သုံးလို့ရသော VPN</b>
+• <b>Psiphon</b> — Free, reliable
+• <b>Lantern</b> — Free, fast
+• <b>Tor Browser</b> — အဆင့်မြင့်၊ ပိုလုံခြုံ
+
+<b>သတိ</b> — VPN သုံးစဉ်တွင်လည်း ကိုယ်ရေးအချက်အလက် မထည့်ပါနဲ့။`,
+        quiz: {q:"မြန်မာပြည်တွင် free VPN ဘာသုံးလို့ရသနည်း?", opts:["ExpressVPN","Psiphon","NordVPN","Surfshark"], ans:1}
+      },
+      {
+        title: "Secure Messaging",
+        icon: "💬",
+        body: `<b>မသုံးသင့်</b>
+• SMS — encrypt မဟုတ်ဘူး၊ စစ်တပ်မြင်နိုင်
+• Facebook Messenger — default မဟုတ်ဘဲ end-to-end မဟုတ်
+• Telegram — group chats encrypt မဟုတ်
+
+<b>သုံးသင့်</b>
+• <b>Signal</b> — End-to-end encrypted, phone number လိုသည်
+• <b>Session</b> — End-to-end encrypted, phone number မလို — မြန်မာပြည်တွင်းကြောင်တို့အတွက် အကောင်းဆုံး
+
+<b>Session App ဒေါင်းနည်း</b>
+• App Store / Play Store တွင် "Session" ရှာပါ
+• Account ဖောက်ရာတွင် phone number မထည့်ရပါ`,
+        quiz: {q:"Phone number မလိုဘဲ သုံးနိုင်သော secure app ကဘာလဲ?", opts:["Signal","WhatsApp","Session","Viber"], ans:2}
+      },
+      {
+        title: "ဓာတ်ပုံ EXIF Data ဖျက်နည်း",
+        icon: "📷",
+        body: `ဓာတ်ပုံတွင် <b>EXIF metadata</b> ပါသည်— GPS location, time, device model
+
+ဒီ data က source ကို ဖော်ထုတ်နိုင်သည်။
+
+<b>iOS</b>
+• Photos → ဓာတ်ပုံ select → Share → "Remove Location"
+• ဒါမှမဟုတ် — Settings → Privacy → Location Services → Camera → Never
+
+<b>Android</b>
+• Camera settings → "Save location" ကို OFF လုပ်ပါ
+
+<b>Desktop</b>
+• ExifTool (free) သုံးပြီး metadata ဖျက်နိုင်
+
+<b>TNV Policy</b> — Submit မလုပ်မီ ဓာတ်ပုံ metadata ဖျက်ပါ`,
+        quiz: {q:"EXIF data တွင် ဘာပါနိုင်သနည်း?", opts:["Password","GPS location","Bank account","Email address"], ans:1}
+      }
+    ]
+  },
+  {
+    title: "📷 အကောင်းဆုံးပုံ / ဗီဒီယို",
+    lessons: [
+      {
+        title: "မြင်ကွင်းဓာတ်ပုံ (Field Photo)",
+        icon: "📸",
+        body: `<b>Context ပြသောဓာတ်ပုံ</b>
+• တစ်ယောက်တည်း close-up မဟုတ်ဘဲ ပတ်ဝန်းကျင်ပါ ထည့်ပါ
+• Human element ပါပါစေ — လူမပါသောဓာတ်ပုံ story မရှိ
+
+<b>လုံခြုံရေး</b>
+• မဖော်ချင်သော မျက်နှာများကို blur လုပ်ပါ
+• Location ဖော်ပြနိုင်သော signboard, landmark များ သတိထားပါ
+• EXIF data ဖျက်ပါ
+
+<b>Quality</b>
+• Natural light သုံးပါ
+• Horizontal (landscape) mode — ဓာတ်ပုံကောင်း
+• Flash မသုံးပါနဲ့ — သတိထားမိနိုင်`,
+        quiz: {q:"Field photo ရိုက်ရာတွင် ဘာကို blur လုပ်သင့်သနည်း?", opts:["Background","မဖော်ချင်သောမျက်နှာ","Camera","Landmark"], ans:1}
+      },
+      {
+        title: "Short Video Reporting",
+        icon: "🎥",
+        body: `<b>မြန်မာ conflict zone ဗီဒီယို standard</b>
+
+<b>မတိုင်မီ</b>
+• ဘာ story ပြချင်သလဲ ကြိုဆုံးဖြတ်ပါ
+• ၃၀-၆၀ seconds ရည်ရွယ်ပါ
+
+<b>ရိုက်ရာတွင်</b>
+• Steady ဖြစ်အောင် — wall / tree မှ မှီပါ
+• Landscape mode (horizontal)
+• Audio ကောင်းအောင် — ဆူညံသံ ဖယ်ပါ
+
+<b>လုံခြုံရေး</b>
+• Faces blur လုပ်ပါ — CapCut / InShot app သုံးနိုင်
+• Location ဖော်ပြသော signboard blur လုပ်ပါ
+• Upload မလုပ်မီ metadata ဖျက်ပါ
+
+<b>Caption အနည်းဆုံး</b>
+• Where, When, What — ၃ ခု ပါရမည်`,
+        quiz: {q:"ဗီဒီယောတွင် ဘာကို blur လုပ်သင့်သနည်း?", opts:["Sky","မဖော်ချင်သောမျက်နှာ","Camera","Background အကုန်"], ans:1}
+      }
+    ]
+  }
+];
+
+let currentModule = 0;
+let currentLesson = 0;
+let quizAnswered = false;
+
+function showModule(idx, btn){
+  currentModule = idx;
+  currentLesson = 0;
+  quizAnswered = false;
+  document.querySelectorAll('[id^="mod"]').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderLesson();
+}
+
+function renderLesson(){
+  const mod = MODULES[currentModule];
+  const lesson = mod.lessons[currentLesson];
+  const total = mod.lessons.length;
+  quizAnswered = false;
+
+  document.getElementById('trainingContent').innerHTML = `
+    <div style="margin-bottom:1rem">
+      <div style="font-family:var(--font-display);font-size:11px;letter-spacing:.1em;color:var(--text3);text-transform:uppercase;margin-bottom:4px">${esc(mod.title)}</div>
+      <div style="display:flex;gap:4px;margin-bottom:1rem">
+        ${mod.lessons.map((l,i)=>`<div style="height:3px;flex:1;border-radius:2px;background:${i<=currentLesson?'var(--accent)':'var(--border2)'}"></div>`).join('')}
+      </div>
+    </div>
+
+    <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0 12px 12px 0;padding:1.25rem;margin-bottom:1rem">
+      <div style="font-size:22px;margin-bottom:8px">${lesson.icon}</div>
+      <div style="font-family:var(--font-my);font-size:16px;font-weight:700;color:var(--text);margin-bottom:12px;line-height:1.4">${esc(lesson.title)}</div>
+      <div style="font-family:var(--font-my);font-size:13px;color:var(--text2);line-height:1.8;white-space:pre-wrap">${lesson.body.replace(/
+/g,'<br>').replace(/<b>(.*?)<\/b>/g,'<strong>$1</strong>')}</div>
+    </div>
+
+    <!-- QUIZ -->
+    <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:1rem">
+      <div style="font-family:var(--font-display);font-size:11px;letter-spacing:.1em;color:var(--accent3);text-transform:uppercase;margin-bottom:8px">QUIZ</div>
+      <div style="font-family:var(--font-my);font-size:14px;font-weight:600;color:var(--text);margin-bottom:10px">${esc(lesson.quiz.q)}</div>
+      <div id="quizOpts" style="display:flex;flex-direction:column;gap:6px">
+        ${lesson.quiz.opts.map((o,i)=>`<button onclick="checkQuiz(${i})" style="padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;text-align:left;cursor:pointer;font-family:var(--font-my);font-size:13px;color:var(--text);transition:all .15s" id="qopt${i}">${esc(o)}</button>`).join('')}
+      </div>
+      <div id="quizFeedback" style="margin-top:8px;font-size:13px;font-family:var(--font-my)"></div>
+    </div>
+
+    <!-- NAV -->
+    <div style="display:flex;gap:8px">
+      ${currentLesson>0?`<button class="btn-sm" onclick="prevLesson()" style="flex:1">← အရင်</button>`:'<div style="flex:1"></div>'}
+      ${currentLesson<total-1?`<button class="btn" onclick="nextLesson()" style="flex:2">ဆက်လက်ဖတ်ရှုမည် →</button>`:`<button class="btn" onclick="finishModule()" style="flex:2;background:var(--green)">✓ သင်ခန်းစာပြီးပြီ</button>`}
+    </div>
+  `;
+}
+
+function checkQuiz(idx){
+  if(quizAnswered)return;
+  quizAnswered = true;
+  const lesson = MODULES[currentModule].lessons[currentLesson];
+  const correct = lesson.quiz.ans;
+  const opts = document.querySelectorAll('[id^="qopt"]');
+  opts.forEach((b,i)=>{
+    b.style.pointerEvents='none';
+    if(i===correct) b.style.background='rgba(22,101,52,.15)',b.style.borderColor='var(--green)',b.style.color='var(--green)';
+    else if(i===idx&&idx!==correct) b.style.background='rgba(153,27,27,.1)',b.style.borderColor='var(--red)',b.style.color='var(--red)';
+  });
+  document.getElementById('quizFeedback').innerHTML = idx===correct
+    ? '<span style="color:var(--green);font-weight:700">✓ မှန်ကန်သည်!</span>'
+    : `<span style="color:var(--red);font-weight:700">✗ မှားသည်။</span> မှန်ကန်သောဖြေချက်: <strong>${esc(lesson.quiz.opts[correct])}</strong>`;
+}
+
+function nextLesson(){currentLesson++;quizAnswered=false;renderLesson()}
+function prevLesson(){currentLesson--;quizAnswered=false;renderLesson()}
+function finishModule(){
+  document.getElementById('trainingContent').innerHTML=`
+    <div style="text-align:center;padding:3rem 1rem">
+      <div style="font-size:48px;margin-bottom:12px">🎓</div>
+      <div style="font-family:var(--font-display);font-size:22px;letter-spacing:.08em;color:var(--text);margin-bottom:8px">သင်ခန်းစာပြီးပါပြီ</div>
+      <div style="font-family:var(--font-my);font-size:13px;color:var(--text2);margin-bottom:1.5rem">${esc(MODULES[currentModule].title)}</div>
+      <button class="btn" onclick="renderLesson();currentLesson=0" style="max-width:200px;margin:0 auto">ပြန်ဖတ်မည်</button>
+    </div>`;
+}
+
+// ── LOGIN SYSTEM ──────────────────────────────────────────────────
+let currentUser = null;
+
+async function initAuth(){
+  const saved = localStorage.getItem('tnv_session');
+  if(saved){
+    try{
+      const s = JSON.parse(saved);
+      // verify still exists in firebase
+      if(s.isEditor && s.password === PASS){
+        currentUser = s;
+        isEd = true;
+        showApp();
+        return;
+      }
+      const u = await fb.get(`users/${s.username}`);
+      if(u && u.password === s.password && u.status === 'approved'){
+        currentUser = s;
+        showApp();
+        return;
+      }
+    }catch(e){}
+  }
+  // check if any users exist — if none, show app in guest mode
+  const users = await fb.get('users');
+  if(!users){
+    showApp();
+    return;
+  }
+  showLogin();
+}
+
+function showLogin(){
+  const ls=document.getElementById('loginScreen');ls.style.display='flex';ls.style.flexDirection='column';ls.style.alignItems='center';ls.style.justifyContent='center';
+  document.querySelector('.bottom-nav').style.display='none';
+  document.querySelector('.header').style.display='none';
+  document.getElementById('vpnBanner').style.display='none';
+  document.querySelectorAll('.view').forEach(v=>v.style.display='none');
+}
+
+function showApp(){
+  document.getElementById('loginScreen').style.display='none';
+  document.querySelector('.bottom-nav').style.display='flex';
+  document.querySelector('.header').style.display='flex';
+  if(!localStorage.getItem('tnv_vpn_ok'))document.getElementById('vpnBanner').style.display='flex';
+  // Restore all views (clear inline styles set by showLogin)
+  document.querySelectorAll('.view').forEach(v=>{v.style.display='';});
+  // Reset to challenge tab
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelector('.tab').classList.add('active');
+  document.getElementById('view-challenge').classList.add('active');
+  renderChallenge();
+}
+
+async function doLogin(){
+  const btn = document.getElementById('loginBtn');
+  const un = document.getElementById('loginUsername').value.trim();
+  const pw = document.getElementById('loginPassword').value;
+  if(!un||!pw){showAl('loginAlert','e','Username နှင့် Password ထည့်ပါ');return}
+  btn.disabled=true;btn.textContent='စစ်ဆေးနေသည်...';
+  const u = await fb.get(`users/${un}`);
+  if(u && u.password === pw){
+    if(u.status !== 'approved'){
+      showAl('loginAlert','w','Account ကို Editor မအတည်မပြုသေးပါ — ခဏစောင့်ပါ');
+      btn.disabled=false;btn.textContent='Login';return;
+    }
+    currentUser = {username:un, password:pw};
+    localStorage.setItem('tnv_session', JSON.stringify(currentUser));
+    showApp();
+  } else {
+    showAl('loginAlert','e','Username သို့မဟုတ် Password မမှန်ပါ');
+  }
+  btn.disabled=false;btn.textContent='Login';
+}
+
+function doLogout(){
+  currentUser=null;
+  localStorage.removeItem('tnv_session');
+  showLogin();
+}
+
+// Reporter account management
+async function loadRepAccounts(){
+  const users = await fb.get('users');
+  const el = document.getElementById('repAccList');
+  const badge = document.getElementById('repAccLabel');
+  if(!el)return;
+  const arr = toArr(users);
+  badge.textContent = arr.length ? `(${arr.length})` : '';
+  if(!arr.length){el.innerHTML=`<div style="font-size:13px;color:var(--text3);font-family:var(--font-my)">Reporters မရှိသေးပါ</div>`;return}
+  el.innerHTML = arr.map(u=>`<div class="scard" style="display:flex;align-items:center;gap:8px;padding:.625rem .875rem">
+    <div style="flex:1">
+      <div style="font-size:13px;font-weight:700;color:var(--text);font-family:var(--font-ui)">${esc(u._id)}</div>
+      <div style="font-size:11px;color:var(--text3)">pw: ${esc(u.password)}</div>
+    </div>
+    <button class="btn-danger" style="padding:4px 10px;font-size:11px" onclick="doDeleteReporter('${esc(u._id)}')">ဖျက်</button>
+  </div>`).join('');
+}
+
+// ── AUTH TAB SWITCH ───────────────────────────────────────────────
+function switchAuthTab(tab){
+  document.getElementById('loginForm').style.display = tab==='login'?'block':'none';
+  document.getElementById('registerForm').style.display = tab==='register'?'block':'none';
+  document.getElementById('editorLoginForm').style.display = tab==='editor'?'block':'none';
+  const tl=document.getElementById('tabLogin');
+  const tr=document.getElementById('tabRegister');
+  if(tl&&tr){
+    tl.style.background = tab==='login'?'var(--accent)':'none';
+    tl.style.color = tab==='login'?'#fff':'var(--text3)';
+    tr.style.background = tab==='register'?'var(--accent)':'none';
+    tr.style.color = tab==='register'?'#fff':'var(--text3)';
+  }
+}
+
+function doEditorDirectLogin(){
+  const btn=document.getElementById('editorLoginBtn');
+  const pw=document.getElementById('editorLoginPw').value;
+  if(pw===PASS){
+    isEd=true;
+    currentUser={username:'editor',password:pw,isEditor:true};
+    localStorage.setItem('tnv_session',JSON.stringify(currentUser));
+    showApp();
+    // auto-open editor tab
+    setTimeout(()=>{
+      const edTab=document.querySelector('.tab:last-child');
+      if(edTab)edTab.click();
+    },300);
+  } else {
+    showAl('editorLoginAlert','e','Password မမှန်ပါ');
+  }
+  btn.disabled=false;
+}
+
+async function doRegister(){
+  const btn=document.getElementById('registerBtn');
+  const un=document.getElementById('regName').value.trim();
+  const pw=document.getElementById('regPass').value;
+  const note=document.getElementById('regNote').value.trim();
+  if(!un){showAl('registerAlert','e','နာမည် ထည့်ပါ');return}
+  if(pw.length<6){showAl('registerAlert','e','Password အနည်းဆုံး ၆ လုံးထည့်ပါ');return}
+  if(!/^[a-zA-Z0-9_]{3,30}$/.test(un)){showAl('registerAlert','e','English letters, numbers, _ သာသုံးပါ');return}
+  btn.disabled=true;btn.textContent='တင်နေသည်...';
+  const existing=await fb.get(`users/${un}`);
+  if(existing){showAl('registerAlert','e','ဒီ username ရှိပြီးပြီ — တခြားတစ်ခုသုံးပါ');btn.disabled=false;btn.textContent='Register လုပ်မည်';return}
+  await fb.set(`users/${un}`,{password:pw,note,status:'pending',createdAt:Date.now()});
+  showAl('registerAlert','s','Register ပြီးပါပြီ ✓ Editor အတည်ပြုပြီးမှ login လုပ်လို့ရမယ်');
+  document.getElementById('regName').value='';
+  document.getElementById('regPass').value='';
+  document.getElementById('regNote').value='';
+  btn.disabled=false;btn.textContent='Register လုပ်မည်';
+}
+
+// ── ACCOUNT MANAGEMENT ────────────────────────────────────────────
+let accTab='pending';
+function switchAccTab(tab,btn){
+  accTab=tab;
+  document.querySelectorAll('#accTabPending,#accTabApproved').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  loadRepAccounts();
+}
+
+async function loadRepAccounts(){
+  const users=await fb.get('users');
+  const el=document.getElementById('repAccList');
+  const badge=document.getElementById('repAccLabel');
+  if(!el)return;
+  const arr=toArr(users);
+  const pending=arr.filter(u=>u.status==='pending'||!u.status);
+  const approved=arr.filter(u=>u.status==='approved');
+  const pendingCount=pending.length;
+  badge.textContent=pendingCount>0?`(⚠️ ${pendingCount} pending)`:'';
+  const list=accTab==='pending'?pending:approved;
+  if(!list.length){
+    el.innerHTML=`<div style="font-size:13px;color:var(--text3);font-family:var(--font-my)">${accTab==='pending'?'Pending accounts မရှိပါ':'Approved accounts မရှိပါ'}</div>`;return;
+  }
+  el.innerHTML=list.map(u=>`<div class="scard">
+    <div class="shead">
+      <span class="suser">${esc(u._id)}</span>
+      <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;${u.status==='approved'?'background:rgba(34,197,94,.1);color:var(--green)':'background:rgba(232,168,48,.1);color:var(--gold)'}">${u.status==='approved'?'✓ Approved':'⏳ Pending'}</span>
+    </div>
+    ${u.note?`<div style="font-size:12px;color:var(--text2);margin:4px 0;font-family:var(--font-my)">${esc(u.note)}</div>`:''}
+    <div style="font-size:10px;color:var(--text3);margin-bottom:8px">${ago(u.createdAt)}</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      ${u.status!=='approved'?`<button class="btn-award" onclick="approveUser('${esc(u._id)}')">✓ Approve</button>`:''}
+      ${u.status==='approved'?`<button class="btn-sm" style="font-size:11px;padding:4px 10px" onclick="revokeUser('${esc(u._id)}')">Revoke</button>`:''}
+      <button class="btn-danger" style="font-size:11px;padding:4px 10px" onclick="doDeleteReporter('${esc(u._id)}')">ဖျက်</button>
+    </div>
+  </div>`).join('');
+}
+
+async function approveUser(un){
+  await fb.patch(`users/${un}`,{status:'approved'});
+  showAl('editorAlert','s',`${un} ကို approve လုပ်ပြီးပါပြီ ✓`);
+  loadRepAccounts();
+}
+
+async function revokeUser(un){
+  await fb.patch(`users/${un}`,{status:'pending'});
+  showAl('editorAlert','s',`${un} ကို revoke လုပ်ပြီးပါပြီ`);
+  loadRepAccounts();
+}
+
+async function doAddReporter(){
+  const un=document.getElementById('newRepUser').value.trim();
+  const pw=document.getElementById('newRepPass').value.trim();
+  if(!un||!pw){showAl('editorAlert','e','Username နှင့် Password ထည့်ပါ');return}
+  if(!/^[a-zA-Z0-9_]{3,30}$/.test(un)){showAl('editorAlert','e','Username format မမှန်ပါ');return}
+  const existing=await fb.get(`users/${un}`);
+  if(existing){showAl('editorAlert','e','ဒီ username ရှိပြီးပြီ');return}
+  await fb.set(`users/${un}`,{password:pw,status:'approved',createdAt:Date.now()});
+  document.getElementById('newRepUser').value='';document.getElementById('newRepPass').value='';
+  showAl('editorAlert','s',`${un} account ဖောက်ပြီးပါပြီ ✓`);
+  loadRepAccounts();
+}
+
+async function doDeleteReporter(un){
+  if(!confirm(`"${un}" account ဖျက်မှာ သေချာလား?`))return;
+  await fb.del(`users/${un}`);
+  loadRepAccounts();
+}
+
+async function loadReports(){
+  const reps=await fb.get('reports');
+  const el=document.getElementById('editorReports');
+  const badge=document.getElementById('repCountLabel');
+  if(!el)return;
+  const arr=toArr(reps).sort((a,b)=>b.timestamp-a.timestamp);
+  badge.textContent=arr.length?`(${arr.length})`:'';
+  if(!arr.length){el.innerHTML=`<div style="font-size:13px;color:var(--text3);font-family:var(--font-my)">Reports မရှိသေးပါ</div>`;return}
+  el.innerHTML=arr.map(r=>`<div class="scard">
+    <div class="shead"><span class="suser" style="font-size:13px">${esc(r.title||'(ခေါင်းစဉ်မပါ)')} <span style="font-size:10px;color:var(--accent3);font-weight:400">— ${esc(r.reporter||'?')}</span></span><span class="stime">${ago(r.timestamp)}</span></div>
+    ${r.location?`<div style="font-size:11px;color:var(--accent3);margin-bottom:4px;font-family:var(--font-my)">📍 ${esc(r.location)}</div>`:''}
+    <div class="scontent">${esc(r.body)}</div>
+    <div style="margin-top:8px;display:flex;gap:6px">
+      <button class="btn-award" onclick="markReport('${r._id}','reviewed')">✓ စစ်ဆေးပြီး</button>
+      <button class="btn-danger" style="font-size:11px;padding:4px 10px" onclick="deleteReport('${r._id}')">ဖျက်</button>
+    </div>
+  </div>`).join('');
+}
+async function markReport(id,status){await fb.patch(`reports/${id}`,{status});loadReports()}
+async function deleteReport(id){await fb.del(`reports/${id}`);loadReports()}
+setInterval(async()=>{if(activeTab==='challenge')renderChallenge();if(activeTab==='chat')renderChat();if(activeTab==='board')renderLB();if(activeTab==='editor'&&isEd){loadEdSubs();loadPast();loadReports();loadRepAccounts()}},10000);
+const svUn=localStorage.getItem('tnv_un');if(svUn){document.getElementById('usernameInput').value=svUn;document.getElementById('chatUsername').value=svUn}
+const svChat=localStorage.getItem('tnv_chat_un');if(svChat)document.getElementById('chatUsername').value=svChat;
+renderSuggestions();initAuth();
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;document.getElementById('installBanner').classList.add('show')});
+function doInstall(){if(!deferredPrompt)return;deferredPrompt.prompt();deferredPrompt.userChoice.then(()=>{deferredPrompt=null;document.getElementById('installBanner').classList.remove('show')})}
+window.addEventListener('appinstalled',()=>document.getElementById('installBanner').classList.remove('show'));
+</script>
+</body>
+</html>
